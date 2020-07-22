@@ -10,7 +10,7 @@ import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import jsonvalues.*;
-import jsonvalues.mongo.JsValuesRegistry;
+import mongovalues.JsValuesRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -103,7 +103,7 @@ public class TestMongoOps {
                                                                    .create()
                                           )
                                     )
-                            .setHandler(findRes -> {
+                            .onComplete(findRes -> {
                                 if (findRes.succeeded()) {
                                     context.verify(()-> {
                                         Assertions.assertEquals(obj,
