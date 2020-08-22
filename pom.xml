@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.imrafaelmerino</groupId>
-  <artifactId>vertx-mongo-actors</artifactId>
+  <artifactId>vertx-mongo-values</artifactId>
   <packaging>jar</packaging>
   <version>0.1</version>
-  <name>vertx-mongo-actors</name>
-  <description></description>
-  <url>https://github.com/imrafaelmerino/vertx-mongo-actors</url>
+  <name>vertx-mongo-values</name>
+  <description>Library based on mongo-values and vertx-values that allows you to work with mongodb and vertx using functions and values</description>
+  <url>https://github.com/imrafaelmerino/vertx-mongo-values</url>
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -25,7 +25,7 @@
     </developer>
   </developers>
   <scm>
-    <url>https://github.com/imrafaelmerino/vertx-actors.git</url>
+    <url>https://github.com/imrafaelmerino/vertx-mongo-values.git</url>
   </scm>
 
   <properties>
@@ -37,10 +37,10 @@
     <MAVEN-SUREFIRE-PLUGIN.VERSION>2.22.1</MAVEN-SUREFIRE-PLUGIN.VERSION>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <MAVEN-COMPILER-PLUGIN.VERSION>3.1</MAVEN-COMPILER-PLUGIN.VERSION>
-    <MAVEN-COMPILER-PLUGIN.SOURCE>8</MAVEN-COMPILER-PLUGIN.SOURCE>
-    <MAVEN-COMPILER-PLUGIN.TARGET>8</MAVEN-COMPILER-PLUGIN.TARGET>
-    <MONGO-JSON-VALUES-VERSION>0.1</MONGO-JSON-VALUES-VERSION>
-    <VERTX-ACTORS-VERSION>0.3</VERTX-ACTORS-VERSION>
+    <MAVEN-COMPILER-PLUGIN.SOURCE>11</MAVEN-COMPILER-PLUGIN.SOURCE>
+    <MAVEN-COMPILER-PLUGIN.TARGET>11</MAVEN-COMPILER-PLUGIN.TARGET>
+    <MONGO-VALUES-VERSION>0.1</MONGO-VALUES-VERSION>
+    <VERTX-VALUES-VERSION>0.1</VERTX-VALUES-VERSION>
     <VERTX-TEST-VERSION>4.0.0-milestone4</VERTX-TEST-VERSION>
     <MONGO-REACTIVE-DRIVER>1.13.1</MONGO-REACTIVE-DRIVER>
   </properties>
@@ -60,6 +60,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${MAVEN-SUREFIRE-PLUGIN.VERSION}</version>
+        <configuration>
+          <excludes>
+            <exclude>**/*IntegrationTest</exclude>
+          </excludes>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -84,13 +89,13 @@
     <dependency>
       <groupId>com.github.imrafaelmerino</groupId>
       <artifactId>mongo-values</artifactId>
-      <version>${MONGO-JSON-VALUES-VERSION}</version>
+      <version>${MONGO-VALUES-VERSION}</version>
     </dependency>
 
     <dependency>
       <groupId>com.github.imrafaelmerino</groupId>
-      <artifactId>vertx-actors</artifactId>
-      <version>${VERTX-ACTORS-VERSION}</version>
+      <artifactId>vertx-values</artifactId>
+      <version>${VERTX-VALUES-VERSION}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -122,6 +127,11 @@
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver-reactivestreams</artifactId>
       <version>${MONGO-REACTIVE-DRIVER}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver-sync</artifactId>
+      <version>4.0.0-beta1</version>
     </dependency>
 
   </dependencies>
