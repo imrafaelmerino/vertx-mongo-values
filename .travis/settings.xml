@@ -13,7 +13,6 @@
         <profile>
             <id>release</id>
             <properties>
-                <gpg.executable>${env.GPG_EXECUTABLE}</gpg.executable>
                 <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
             </properties>
         </profile>

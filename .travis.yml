@@ -1,10 +1,12 @@
 language: java
 install: mvn install
 before_install:
-- openssl aes-256-cbc -K $encrypted_b9997e150274_key -iv $encrypted_b9997e150274_iv -in key.asc.enc -out key.asc -d
-- echo $GPG_PASSPHRASE | gpg --passphrase-fd 0 --batch --yes --import key.asc
+ - openssl aes-256-cbc -K $encrypted_b9997e150274_key -iv $encrypted_b9997e150274_iv -in key.asc.enc -out key.asc -d
+ - echo $GPG_PASSPHRASE | gpg --passphrase-fd 0 --batch --yes --import key.asc
+
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+ - bash <(curl -s https://codecov.io/bash)
+
 deploy:
 - provider: script
   script: mvn deploy --settings .travis/settings.xml -DskipTests=true -B -U -Prelease
