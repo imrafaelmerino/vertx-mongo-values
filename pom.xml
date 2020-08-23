@@ -54,6 +54,10 @@
         <configuration>
           <source>${MAVEN-COMPILER-PLUGIN.SOURCE}</source>
           <target>${MAVEN-COMPILER-PLUGIN.TARGET}</target>
+          <showWarnings>true</showWarnings>
+          <compilerArgs>
+            <arg>-Xlint:all</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
       <plugin>
@@ -71,7 +75,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${MAVEN-JAVADOC-PLUGIN.VERSION}</version>
         <configuration>
-          <source>8</source>
+          <source>11</source>
         </configuration>
         <executions>
           <execution>
