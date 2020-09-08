@@ -12,29 +12,31 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 
-class Count implements Function<JsObj, Long> {
+public class Count implements Function<JsObj, Long> {
 
-    public final CountOptions inputs;
-    public final Supplier<MongoCollection<JsObj>> collection;
+    private final CountOptions options;
+    private final Supplier<MongoCollection<JsObj>> collectionSupplier;
+    private static final CountOptions DEFAULT_OPTIONS = new CountOptions();
 
-    public Count(final CountOptions inputs,
-                 final Supplier<MongoCollection<JsObj>> collection) {
-        this.inputs = inputs;
-        this.collection = collection;
+    public Count(final Supplier<MongoCollection<JsObj>> collectionSupplier,
+                 final CountOptions options
+                ) {
+        this.options = requireNonNull(options);
+        this.collectionSupplier = requireNonNull(collectionSupplier);
     }
 
-    public Count(final Supplier<MongoCollection<JsObj>> collection) {
-        this.inputs = new CountOptions();
-        this.collection = collection;
+    public Count(final Supplier<MongoCollection<JsObj>> collectionSupplier) {
+        this.options = DEFAULT_OPTIONS;
+        this.collectionSupplier = requireNonNull(collectionSupplier);
     }
 
     @Override
     public Long apply(final JsObj queryMessage) {
 
-        Bson                   query      = Converters.objVal2Bson.apply(queryMessage);
-        MongoCollection<JsObj> collection = requireNonNull(this.collection.get());
+        Bson                   query      = Converters.jsObj2Bson.apply(requireNonNull(queryMessage));
+        MongoCollection<JsObj> collection = requireNonNull(this.collectionSupplier.get());
         return collection.countDocuments(query,
-                                         inputs
+                                         options
                                         );
 
 

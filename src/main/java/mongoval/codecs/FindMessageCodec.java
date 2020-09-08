@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class FindMessageCodec implements MessageCodec<FindMessage, FindMessage> {
 
-    final static FindMessageCodec INSTANCE = new FindMessageCodec();
+    static final FindMessageCodec INSTANCE = new FindMessageCodec();
 
     private FindMessageCodec() {
     }
@@ -25,7 +25,7 @@ public class FindMessageCodec implements MessageCodec<FindMessage, FindMessage> 
     private static final String LIMIT = "limit";
     private static final String COMMENT = "comment";
     private static final String FILTER = "filter";
-    private static final String BATCHSIZE = "batchSize";
+    private static final String BATCH_SIZE = "batchSize";
     private static final String SORT = "sort";
     private static final String PROJECTION = "projection";
     private static final String MAX_AWAIT_TIME = "maxAwaitTime";
@@ -58,7 +58,7 @@ public class FindMessageCodec implements MessageCodec<FindMessage, FindMessage> 
                     JsInt.of(findMessage.limit)
                    );
 
-        options = options.set(BATCHSIZE,
+        options = options.set(BATCH_SIZE,
                               JsInt.of(findMessage.batchSize)
                              );
 
@@ -141,7 +141,7 @@ public class FindMessageCodec implements MessageCodec<FindMessage, FindMessage> 
         Boolean showRecordId    = options.getBool(SHOW_RECORD_ID);
         Integer maxTime         = options.getInt(MAX_TIME);
         Integer maxAwaitTime    = options.getInt(MAX_AWAIT_TIME);
-        FindMessageBuilder builder = new FindMessageBuilder().batchSize(options.getInt(BATCHSIZE))
+        FindMessageBuilder builder = new FindMessageBuilder().batchSize(options.getInt(BATCH_SIZE))
                                                              .comment(options.getStr(COMMENT))
                                                              .filter(options.getObj(FILTER))
                                                              .hint(options.getObj(HINT))

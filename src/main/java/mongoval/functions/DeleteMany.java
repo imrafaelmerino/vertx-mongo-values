@@ -7,49 +7,58 @@ import com.mongodb.client.result.DeleteResult;
 import jsonvalues.JsObj;
 import mongoval.Converters;
 
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
 
-class DeleteMany<O> implements Function<JsObj, O> {
+public class DeleteMany<O> implements Function<JsObj, O> {
 
-    public final Supplier<MongoCollection<JsObj>> collection;
-    public final Function<DeleteResult, O> resultConverter;
-    public final DeleteOptions options;
+    private final Supplier<MongoCollection<JsObj>> collectionSupplier;
+    private final Function<DeleteResult, O> resultConverter;
+    private final DeleteOptions options;
     private ClientSession session;
+    private static final DeleteOptions DEFAULT_OPTIONS = new DeleteOptions();
 
 
-    public DeleteMany(final Supplier<MongoCollection<JsObj>> collection,
+    public DeleteMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                       final Function<DeleteResult, O> resultConverter,
                       final DeleteOptions options) {
-        this.collection = collection;
-        this.resultConverter = resultConverter;
-        this.options = options;
+        this.collectionSupplier = requireNonNull(collectionSupplier);
+        this.resultConverter = requireNonNull(resultConverter);
+        this.options = requireNonNull(options);
     }
 
-    public DeleteMany(final Supplier<MongoCollection<JsObj>> collection,
+    public DeleteMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
+                      final Function<DeleteResult, O> resultConverter) {
+        this(collectionSupplier,
+             resultConverter,
+             DEFAULT_OPTIONS
+            );
+    }
+
+
+    public DeleteMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                       final Function<DeleteResult, O> resultConverter,
                       final DeleteOptions options,
                       final ClientSession session) {
-        this(collection,
+        this(collectionSupplier,
              resultConverter,
              options
             );
-        this.session = Objects.requireNonNull(session);
+        this.session = requireNonNull(session);
     }
 
     @Override
     public O apply(final JsObj filter) {
-        MongoCollection<JsObj> collection = requireNonNull(this.collection.get());
-        return resultConverter.apply(session
-                                             != null ? collection.deleteMany(session,
-                                                                             Converters.objVal2Bson.apply(filter),
-                                                                             options
-                                                                            ) :
-                                     collection.deleteMany(Converters.objVal2Bson.apply(filter),
+        MongoCollection<JsObj> collection = requireNonNull(this.collectionSupplier.get());
+        return resultConverter.apply(session != null ?
+                                     collection.deleteMany(session,
+                                                           Converters.jsObj2Bson.apply(requireNonNull(filter)),
+                                                           options
+                                                          ) :
+                                     collection.deleteMany(Converters.jsObj2Bson.apply(requireNonNull(filter)),
                                                            options
                                                           )
                                     );

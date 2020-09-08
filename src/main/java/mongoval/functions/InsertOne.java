@@ -11,55 +11,51 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 public class InsertOne<R> implements Function<JsObj, R> {
 
 
-    private final Supplier<MongoCollection<JsObj>> collection;
+    private final Supplier<MongoCollection<JsObj>> collectionSupplier;
     private final InsertOneOptions options;
     private final Function<InsertOneResult, R> resultConverter;
     private ClientSession session;
+    private static final InsertOneOptions DEFAULT_OPTIONS = new InsertOneOptions();
 
-    public InsertOne(final Supplier<MongoCollection<JsObj>> collection,
+
+    public InsertOne(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                      final Function<InsertOneResult, R> resultConverter) {
-        this(collection,
-             new InsertOneOptions(),
-             resultConverter
+        this(collectionSupplier,
+             resultConverter,
+             DEFAULT_OPTIONS
             );
     }
 
-    public InsertOne(final Supplier<MongoCollection<JsObj>> collection,
-                     final InsertOneOptions options,
-                     final Function<InsertOneResult, R> resultConverter) {
-        this.collection = requireNonNull(collection);
+    public InsertOne(final Supplier<MongoCollection<JsObj>> collectionSupplier,
+                     final Function<InsertOneResult, R> resultConverter,
+                     final InsertOneOptions options
+                    ) {
+        this.collectionSupplier = requireNonNull(collectionSupplier);
         this.options = requireNonNull(options);
         this.resultConverter = requireNonNull(resultConverter);
     }
 
-    public InsertOne(final Supplier<MongoCollection<JsObj>> collection,
+    public InsertOne(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                      final InsertOneOptions options,
                      final Function<InsertOneResult, R> resultConverter,
                      final ClientSession session) {
-        this(collection,
-             options,
-             resultConverter
+        this(collectionSupplier,
+             resultConverter,
+             options
             );
         this.session = requireNonNull(session);
     }
 
-    public InsertOne(final Supplier<MongoCollection<JsObj>> collection,
-                     final Function<InsertOneResult, R> resultConverter,
-                     final ClientSession session) {
-        this(collection,
-             new InsertOneOptions(),
-             resultConverter
-            );
-        this.session = requireNonNull(session);
-    }
 
     @Override
     public R apply(final JsObj message) {
-        MongoCollection<JsObj> collection = requireNonNull(this.collection.get());
+        requireNonNull(message);
+        MongoCollection<JsObj> collection = requireNonNull(this.collectionSupplier.get());
 
         return session != null ?
                resultConverter.apply(collection

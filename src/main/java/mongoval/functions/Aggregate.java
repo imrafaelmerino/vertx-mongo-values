@@ -28,7 +28,7 @@ public class Aggregate<O> implements Function<JsArray, O> {
 
     @Override
     public O apply(final JsArray m) {
-        List<Bson>             pipeline   = Converters.arrayVal2ListOfBsonVal.apply(m);
+        List<Bson>             pipeline   = Converters.jsArray2ListOfBson.apply(m);
         MongoCollection<JsObj> collection = requireNonNull(this.collection.get());
         return resultConverter.apply(collection.aggregate(pipeline));
     }

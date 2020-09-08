@@ -1,6 +1,7 @@
 package mongoval;
 
 import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -13,7 +14,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class MongoClient extends AbstractVerticle {
+public class MongoVertxClient extends AbstractVerticle {
 
 
     public Function<String, MongoDatabase> database() {
@@ -22,9 +23,9 @@ public class MongoClient extends AbstractVerticle {
 
 
     public final Function<MongoDatabase, Function<String, MongoCollection<JsObj>>> collection =
-            db -> name -> (MongoCollection<JsObj>) getCollection.apply(db)
-                                                                .apply(name
-                                                                      );
+            db -> name -> getCollection.apply(db)
+                                       .apply(name
+                                             );
 
 
     public Supplier<MongoCollection<JsObj>> collection(String db,
@@ -37,7 +38,7 @@ public class MongoClient extends AbstractVerticle {
         };
     }
 
-    private static volatile com.mongodb.client.MongoClient mongoClient;
+    private static volatile MongoClient mongoClient;
 
     private static Function<String, MongoDatabase> getDatabase;
 
@@ -45,15 +46,15 @@ public class MongoClient extends AbstractVerticle {
 
     private final MongoClientSettings settings;
 
-    public MongoClient(final MongoClientSettings settings) {
+    public MongoVertxClient(final MongoClientSettings settings) {
         this.settings = settings;
     }
 
     @Override
     public void start(final Promise<Void> startPromise) {
-        com.mongodb.client.MongoClient result = mongoClient;
+        MongoClient result = mongoClient;
         if (result == null) {
-            synchronized (MongoClient.class) {
+            synchronized (MongoVertxClient.class) {
                 if (mongoClient == null) {
                     try {
                         mongoClient = result = MongoClients.create(requireNonNull(settings));

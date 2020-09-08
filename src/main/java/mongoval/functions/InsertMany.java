@@ -18,34 +18,43 @@ import static java.util.Objects.requireNonNull;
 public class InsertMany<R> implements Function<JsArray, R> {
 
 
-    private final Supplier<MongoCollection<JsObj>> collection;
+    private final Supplier<MongoCollection<JsObj>> collectionSupplier;
     private final InsertManyOptions options;
     private final Function<InsertManyResult, R> resultConverter;
     private ClientSession session;
 
-    public InsertMany(final Supplier<MongoCollection<JsObj>> collection,
+    public InsertMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                       final InsertManyOptions options,
                       final Function<InsertManyResult, R> resultConverter,
                       final ClientSession session) {
-        this(collection,
-             options,
-             resultConverter
+        this(collectionSupplier,
+             resultConverter,
+             options
             );
         this.session = session;
     }
 
-    public InsertMany(final Supplier<MongoCollection<JsObj>> collection,
-                      final InsertManyOptions options,
+    public InsertMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                       final Function<InsertManyResult, R> resultConverter) {
-        this.collection = requireNonNull(collection);
+        this.collectionSupplier = requireNonNull(collectionSupplier);
+        this.options = new InsertManyOptions();
+        this.resultConverter = requireNonNull(resultConverter);
+    }
+
+    public InsertMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
+                      final Function<InsertManyResult, R> resultConverter,
+                      final InsertManyOptions options
+                     ) {
+        this.collectionSupplier = requireNonNull(collectionSupplier);
         this.options = requireNonNull(options);
         this.resultConverter = requireNonNull(resultConverter);
     }
 
+
     @Override
     public R apply(final JsArray message) {
-        List<JsObj>            docs       = Converters.arrayVal2ListOfObjVal.apply(message);
-        MongoCollection<JsObj> collection = requireNonNull(this.collection.get());
+        List<JsObj>            docs       = Converters.jsArray2ListOfJsObj.apply(message);
+        MongoCollection<JsObj> collection = requireNonNull(collectionSupplier.get());
 
         return session != null ?
                resultConverter.apply(collection

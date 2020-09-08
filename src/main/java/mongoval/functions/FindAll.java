@@ -6,14 +6,14 @@ import jsonvalues.JsObj;
 
 import java.util.function.Supplier;
 
-import static mongoval.Converters.toJsArray;
+import static mongoval.Converters.findIterable2JsArray;
 
 
 public class FindAll extends Find<JsArray> {
 
-    public FindAll(final Supplier<MongoCollection<JsObj>> collection) {
-        super(collection,
-              toJsArray
+    public FindAll(final Supplier<MongoCollection<JsObj>> collectionSupplier) {
+        super(collectionSupplier,
+              findIterable2JsArray
              );
     }
 

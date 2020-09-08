@@ -11,48 +11,59 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
-import static mongoval.Converters.objVal2Bson;
+import static mongoval.Converters.jsObj2Bson;
 
 
 public class UpdateMany<O> implements Function<UpdateMessage, O> {
 
-    public final UpdateOptions options;
-    public final Supplier<MongoCollection<JsObj>> collection;
-    public final Function<UpdateResult, O> resultConverter;
+    private final UpdateOptions options;
+    private final Supplier<MongoCollection<JsObj>> collectionSupplier;
+    private final Function<UpdateResult, O> resultConverter;
     private ClientSession session;
+    private static final UpdateOptions DEFAULT_OPTIONS = new UpdateOptions();
 
-    public UpdateMany(final UpdateOptions options,
-                      final Supplier<MongoCollection<JsObj>> collection,
-                      final Function<UpdateResult, O> resultConverter) {
+
+    public UpdateMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
+                      final Function<UpdateResult, O> resultConverter
+                     ) {
+        this.options = DEFAULT_OPTIONS;
+        this.collectionSupplier = requireNonNull(collectionSupplier);
+        this.resultConverter = requireNonNull(resultConverter);
+    }
+
+    public UpdateMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
+                      final Function<UpdateResult, O> resultConverter,
+                      final UpdateOptions options
+                     ) {
         this.options = requireNonNull(options);
-        this.collection = requireNonNull(collection);
+        this.collectionSupplier = requireNonNull(collectionSupplier);
         this.resultConverter = requireNonNull(resultConverter);
     }
 
     public UpdateMany(final UpdateOptions options,
-                      final Supplier<MongoCollection<JsObj>> collection,
+                      final Supplier<MongoCollection<JsObj>> collectionSupplier,
                       final Function<UpdateResult, O> resultConverter,
                       final ClientSession session) {
-        this(options,
-             collection,
-             resultConverter
+        this(collectionSupplier,
+             resultConverter,
+             options
             );
         this.session = requireNonNull(session);
     }
 
     @Override
     public O apply(final UpdateMessage message) {
-
-        MongoCollection<JsObj> collection = requireNonNull(this.collection.get());
+        requireNonNull(message);
+        MongoCollection<JsObj> collection = requireNonNull(this.collectionSupplier.get());
         return session != null ?
                resultConverter.apply(collection.updateMany(session,
-                                                           objVal2Bson.apply(message.filter),
-                                                           objVal2Bson.apply(message.update),
+                                                           jsObj2Bson.apply(message.filter),
+                                                           jsObj2Bson.apply(message.update),
                                                            options
                                                           )
                                     ) :
-               resultConverter.apply(collection.updateMany(objVal2Bson.apply(message.filter),
-                                                           objVal2Bson.apply(message.update),
+               resultConverter.apply(collection.updateMany(jsObj2Bson.apply(message.filter),
+                                                           jsObj2Bson.apply(message.update),
                                                            options
                                                           )
                                     )

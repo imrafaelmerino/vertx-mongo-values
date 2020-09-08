@@ -12,18 +12,19 @@ import static java.util.Objects.requireNonNull;
 
 public abstract class MongoModule extends VertxModule {
     private static final DeploymentOptions DEFAULT_DEPLOYMENT_OPTIONS = new DeploymentOptions().setWorker(true);
-    public final Supplier<MongoCollection<JsObj>> collection;
+    public final Supplier<MongoCollection<JsObj>> collectionSupplier;
 
 
-    public MongoModule(final DeploymentOptions deploymentOptions,
-                       final Supplier<MongoCollection<JsObj>> collection) {
+    public MongoModule(final Supplier<MongoCollection<JsObj>> collectionSupplier,
+                       final DeploymentOptions deploymentOptions
+                       ) {
         super(deploymentOptions);
-        this.collection = requireNonNull(collection);
+        this.collectionSupplier = requireNonNull(collectionSupplier);
     }
 
-    public MongoModule(final Supplier<MongoCollection<JsObj>> collection) {
+    public MongoModule(final Supplier<MongoCollection<JsObj>> collectionSupplier) {
         super(DEFAULT_DEPLOYMENT_OPTIONS);
-        this.collection = requireNonNull(collection);
+        this.collectionSupplier = requireNonNull(collectionSupplier);
     }
 
 

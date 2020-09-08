@@ -5,43 +5,49 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.FindOneAndDeleteOptions;
 import jsonvalues.JsObj;
 import mongoval.Converters;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
 
-class FindOneAndDelete implements Function<JsObj, JsObj> {
+public class FindOneAndDelete implements Function<JsObj, JsObj> {
 
-    public final Supplier<MongoCollection<JsObj>> collection;
+    private final Supplier<MongoCollection<JsObj>> collectionSupplier;
     private final FindOneAndDeleteOptions options;
     private ClientSession session;
+    private static final FindOneAndDeleteOptions DEFAULT_OPTIONS = new FindOneAndDeleteOptions();
 
-    public FindOneAndDelete(final Supplier<MongoCollection<JsObj>> collection,
+
+    public FindOneAndDelete(final Supplier<MongoCollection<JsObj>> collectionSupplier) {
+        this(collectionSupplier, DEFAULT_OPTIONS);
+    }
+    public FindOneAndDelete(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                             final FindOneAndDeleteOptions options) {
-        this.options = options;
-        this.collection = requireNonNull(collection);
+        this.options = requireNonNull(options);
+        this.collectionSupplier = requireNonNull(collectionSupplier);
     }
 
-    public FindOneAndDelete(final Supplier<MongoCollection<JsObj>> collection,
+    public FindOneAndDelete(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                             final FindOneAndDeleteOptions options,
                             final ClientSession session) {
-        this(collection,
+        this(collectionSupplier,
              options
             );
-        this.session = session;
+        this.session = requireNonNull(session);
     }
 
     @Override
-    public JsObj apply(final JsObj o) {
-        MongoCollection<JsObj> collection = this.collection.get();
+    public JsObj apply(final JsObj doc) {
+        MongoCollection<JsObj> collection = this.collectionSupplier.get();
         return session != null ?
                collection.findOneAndDelete(session,
-                                           Converters.objVal2Bson.apply(o),
+                                           Converters.jsObj2Bson.apply(doc),
                                            options
                                           ) :
                collection
-                       .findOneAndDelete(Converters.objVal2Bson.apply(o),
+                       .findOneAndDelete(Converters.jsObj2Bson.apply(doc),
                                          options
                                         );
     }

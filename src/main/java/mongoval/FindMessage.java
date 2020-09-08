@@ -5,6 +5,8 @@ import jsonvalues.JsObj;
 import static java.util.Objects.requireNonNull;
 
 public class FindMessage {
+
+    @SuppressWarnings({"squid:S107"})//it's private, needed to create a builder. End user will never has to deal with it
     FindMessage(final JsObj filter,
                 final JsObj sort,
                 final JsObj projection,
@@ -81,21 +83,21 @@ public class FindMessage {
     public final Long maxTime;
 
 
-    public static FindMessage filter(final JsObj filter) {
+    public static FindMessage ofFilter(final JsObj filter) {
         return new FindMessageBuilder().filter(requireNonNull(filter))
                                        .create();
     }
 
-    public static FindMessage filter(final JsObj filter,
-                                     final JsObj projection) {
+    public static FindMessage ofFilter(final JsObj filter,
+                                       final JsObj projection) {
         return new FindMessageBuilder().filter(requireNonNull(filter))
                                        .projection(requireNonNull(projection))
                                        .create();
     }
 
-    public static FindMessage filter(final JsObj filter,
-                                     final JsObj projection,
-                                     JsObj sort) {
+    public static FindMessage ofFilter(final JsObj filter,
+                                       final JsObj projection,
+                                       final JsObj sort) {
         return new FindMessageBuilder().filter(requireNonNull(filter))
                                        .projection(requireNonNull(projection))
                                        .sort(requireNonNull(sort))

@@ -14,31 +14,31 @@ import static java.util.Objects.requireNonNull;
 
 public class Watcher extends AbstractVerticle {
 
-    public final Supplier<MongoCollection<JsObj>> collection;
+    public final Supplier<MongoCollection<JsObj>> collectionSupplier;
     public final Consumer<ChangeStreamIterable<JsObj>> consumer;
     private ClientSession session;
 
-    public Watcher(final Supplier<MongoCollection<JsObj>> collection,
+    public Watcher(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                    final Consumer<ChangeStreamIterable<JsObj>> consumer) {
-        this.collection = requireNonNull(collection);
+        this.collectionSupplier = requireNonNull(collectionSupplier);
         this.consumer = requireNonNull(consumer);
     }
 
-    public Watcher(final Supplier<MongoCollection<JsObj>> collection,
+    public Watcher(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                    final Consumer<ChangeStreamIterable<JsObj>> consumer,
                    final ClientSession session) {
-        this(collection,
+        this(collectionSupplier,
              consumer);
         this.session = session;
     }
 
     @Override
     public void start() {
-        if (session != null) consumer.accept(collection.get()
-                                                       .watch(session));
+        if (session != null) consumer.accept(collectionSupplier.get()
+                                                               .watch(session));
         else
-            consumer.accept(collection.get()
-                                      .watch());
+            consumer.accept(collectionSupplier.get()
+                                              .watch());
     }
 
 
