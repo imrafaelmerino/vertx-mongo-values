@@ -15,10 +15,10 @@ public abstract class MongoModule extends VertxModule {
     public final Supplier<MongoCollection<JsObj>> collectionSupplier;
 
     /**
-     deploymentOptions instances are overwritten to one and
-     worker flag is overwritten to true
-     @param collectionSupplier
-     @param deploymentOptions
+     Creates a new mongo module. The given deploymentOptions instances and worker options are  overwritten to one and
+     true respectively.
+     @param collectionSupplier the mongo collection supplier
+     @param deploymentOptions the verticles deployment options
      */
     public MongoModule(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                        final DeploymentOptions deploymentOptions
