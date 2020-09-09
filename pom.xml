@@ -6,7 +6,7 @@
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>vertx-mongo-values</artifactId>
   <packaging>jar</packaging>
-  <version>0.1</version>
+  <version>0.2</version>
   <name>vertx-mongo-values</name>
   <description>Library based on mongo-values and vertx-values that allows you to work with mongodb and vertx using functions and values</description>
   <url>https://github.com/imrafaelmerino/vertx-mongo-values</url>
