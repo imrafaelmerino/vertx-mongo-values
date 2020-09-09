@@ -17,41 +17,31 @@ import static java.util.Objects.requireNonNull;
 public class MongoVertxClient extends AbstractVerticle {
 
 
-    public Function<String, MongoDatabase> database() {
-        return getDatabase;
-    }
+    public Function<String, MongoDatabase> getDatabase;
 
-
-    public final Function<MongoDatabase, Function<String, MongoCollection<JsObj>>> collection =
-            db -> name -> getCollection.apply(db)
-                                       .apply(name
-                                             );
-
-
-    public Supplier<MongoCollection<JsObj>> collection(String db,
-                                                       String collectionName) {
+    public final Supplier<MongoCollection<JsObj>> getCollection(String db,
+                                                                String collectionName) {
         return () -> {
-            MongoDatabase database = database().apply(db);
-            return this.collection
+            MongoDatabase database = getDatabase.apply(requireNonNull(db));
+            return requireNonNull(this.getCollectionFromMongoDB)
                     .apply(database)
-                    .apply(collectionName);
+                    .apply(requireNonNull(collectionName));
         };
     }
 
-    private static volatile MongoClient mongoClient;
+    private volatile MongoClient mongoClient;
 
-    private static Function<String, MongoDatabase> getDatabase;
-
-    private static Function<MongoDatabase, Function<String, MongoCollection<JsObj>>> getCollection;
+    private Function<MongoDatabase, Function<String, MongoCollection<JsObj>>> getCollectionFromMongoDB;
 
     private final MongoClientSettings settings;
 
     public MongoVertxClient(final MongoClientSettings settings) {
-        this.settings = settings;
+        this.settings = requireNonNull(settings);
     }
 
     @Override
     public void start(final Promise<Void> startPromise) {
+        requireNonNull(startPromise);
         MongoClient result = mongoClient;
         if (result == null) {
             synchronized (MongoVertxClient.class) {
@@ -59,9 +49,9 @@ public class MongoVertxClient extends AbstractVerticle {
                     try {
                         mongoClient = result = MongoClients.create(requireNonNull(settings));
                         getDatabase = name -> mongoClient.getDatabase(requireNonNull(name));
-                        getCollection = db -> name -> requireNonNull(db).getCollection(requireNonNull(name),
-                                                                                       JsObj.class
-                                                                                      );
+                        getCollectionFromMongoDB = db -> name -> requireNonNull(db).getCollection(requireNonNull(name),
+                                                                                                  JsObj.class
+                                                                                                 );
                         startPromise.complete();
                     } catch (Exception error) {
                         startPromise.fail(error);
