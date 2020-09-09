@@ -60,9 +60,9 @@ public class MongoOpsIntegrationTest {
                               ) {
         MongoVertxClient mongoClient = new MongoVertxClient(settings);
 
-        dataModule = new DataCollectionModule(mongoClient.collection("test",
-                                                                     "Data"
-                                                                    )
+        dataModule = new DataCollectionModule(mongoClient.getCollection("test",
+                                                                        "Data"
+                                                                       )
         );
 
         CompositeFuture.all(vertx.deployVerticle(mongoClient),
@@ -121,7 +121,7 @@ public class MongoOpsIntegrationTest {
 
         int key = random.nextInt();
 
-        Val<JsArray> val = dataModule.insertAll
+        Val<JsArray> val = dataModule.insertMany
                 .apply(JsArray.of(JsObj.of("name",
                                            JsStr.of("Rafa"),
                                            "age",
@@ -227,32 +227,32 @@ public class MongoOpsIntegrationTest {
                                 );
 
         JsObj newObj = filter.union(JsObj.of("string",
-                                JsStr.of("new"),
-                                "int",
-                                JsInt.of(Integer.MIN_VALUE),
-                                "long",
-                                JsLong.of(Long.MIN_VALUE),
-                                "boolean",
-                                FALSE,
-                                "double",
-                                JsDouble.of(10.5d),
-                                "decimal",
-                                JsBigDec.of(new BigDecimal("1.544456")),
-                                "array",
-                                JsArray.of(1,
-                                           2,
-                                           3,
-                                           4,
-                                           5
-                                          ),
-                                "null",
-                                NULL,
-                                "instant",
-                                JsInstant.of(Instant.now(Clock.tickMillis(ZoneId.of("UTC")))),
-                                "biginteger",
-                                JsBigInt.of(new BigInteger("21111111111111111111111"))
+                                             JsStr.of("new"),
+                                             "int",
+                                             JsInt.of(Integer.MIN_VALUE),
+                                             "long",
+                                             JsLong.of(Long.MIN_VALUE),
+                                             "boolean",
+                                             FALSE,
+                                             "double",
+                                             JsDouble.of(10.5d),
+                                             "decimal",
+                                             JsBigDec.of(new BigDecimal("1.544456")),
+                                             "array",
+                                             JsArray.of(1,
+                                                        2,
+                                                        3,
+                                                        4,
+                                                        5
+                                                       ),
+                                             "null",
+                                             NULL,
+                                             "instant",
+                                             JsInstant.of(Instant.now(Clock.tickMillis(ZoneId.of("UTC")))),
+                                             "biginteger",
+                                             JsBigInt.of(new BigInteger("21111111111111111111111"))
 
-                               ));
+                                            ));
 
         dataModule.insertOne
                 .apply(obj)
@@ -270,7 +270,7 @@ public class MongoOpsIntegrationTest {
                 })
                 .onComplete(
                         TestFns.pipeTo(result -> {
-                                           System.out.println("findOne result "+result);
+                                           System.out.println("findOne result " + result);
                                            assertEquals(Optional.of(newObj),
                                                         result.map(it -> it.delete("_id"))
                                                        );
@@ -281,5 +281,125 @@ public class MongoOpsIntegrationTest {
                 .get();
     }
 
+
+    @Test
+    public void test_find_sort_asc_and_projection(VertxTestContext context) {
+
+        JsInt keyValue = JsInt.of(random.nextInt());
+        JsObj filter = JsObj.of("key",
+                                keyValue
+                               );
+        JsArray expectedSortAsc = JsArray.of(JsObj.of("name",
+                                                      JsStr.of("Albert")
+                                                     ),
+                                             JsObj.of("name",
+                                                      JsStr.of("Philip")
+                                                     ),
+                                             JsObj.of("name",
+                                                      JsStr.of("Rafa")
+                                                     )
+                                            );
+        JsObj projection = JsObj.of("name",
+                                    JsInt.of(1),
+                                    "_id",
+                                    JsInt.of(0)
+
+                                   );
+        JsObj sortAsc = JsObj.of("age",
+                                 JsInt.of(1)
+                                );
+        JsArray array = JsArray.of(JsObj.of("age",
+                                            JsInt.of(16),
+                                            "name",
+                                            JsStr.of("Albert"),
+                                            "key",
+                                            keyValue
+                                           ),
+                                   JsObj.of("age",
+                                            JsInt.of(25),
+                                            "name",
+                                            JsStr.of("Philip"),
+                                            "key",
+                                            keyValue
+                                           ),
+                                   JsObj.of("age",
+                                            JsInt.of(38),
+                                            "name",
+                                            JsStr.of("Rafa"),
+                                            "key",
+                                            keyValue
+                                           )
+                                  );
+
+        Verifiers.<JsArray>verifySuccess(expectedSortAsc::equals)
+                .accept(dataModule.insertMany.apply(array)
+                                             .flatMap(result -> dataModule.findAll.apply(FindMessage.ofFilter(filter,
+                                                                                                              projection,
+                                                                                                              sortAsc
+                                                                                                             ))),
+                        context
+                       );
+
+    }
+
+    @Test
+    public void test_find_sort_desc_and_projection(VertxTestContext context) {
+
+        JsInt keyValue = JsInt.of(random.nextInt());
+        JsObj filter = JsObj.of("key",
+                                keyValue
+                               );
+        JsArray expectedSortDesc = JsArray.of(JsObj.of("name",
+                                                       JsStr.of("Rafa")
+                                                      ),
+                                              JsObj.of("name",
+                                                       JsStr.of("Philip")
+                                                      ),
+                                              JsObj.of("name",
+                                                       JsStr.of("Albert")
+                                                      )
+                                             );
+        JsObj projection = JsObj.of("name",
+                                    JsInt.of(1),
+                                    "_id",
+                                    JsInt.of(0)
+
+                                   );
+        JsObj sortDesc = JsObj.of("age",
+                                 JsInt.of(-1)
+                                );
+        JsArray array = JsArray.of(JsObj.of("age",
+                                            JsInt.of(16),
+                                            "name",
+                                            JsStr.of("Albert"),
+                                            "key",
+                                            keyValue
+                                           ),
+                                   JsObj.of("age",
+                                            JsInt.of(25),
+                                            "name",
+                                            JsStr.of("Philip"),
+                                            "key",
+                                            keyValue
+                                           ),
+                                   JsObj.of("age",
+                                            JsInt.of(38),
+                                            "name",
+                                            JsStr.of("Rafa"),
+                                            "key",
+                                            keyValue
+                                           )
+                                  );
+
+        Verifiers.<JsArray>verifySuccess(expectedSortDesc::equals)
+                .accept(dataModule.insertMany.apply(array)
+                                             .flatMap(result -> dataModule.findAll.apply(FindMessage.ofFilter(filter,
+                                                                                                              projection,
+                                                                                                              sortDesc
+                                                                                                             ))),
+                        context
+                       );
+
+    }
 
 }

@@ -5,7 +5,7 @@ import io.vertx.core.eventbus.MessageCodec;
 import jsonvalues.JsObj;
 import mongoval.UpdateMessage;
 
-public class UpdateMessageCodec implements MessageCodec<UpdateMessage, UpdateMessage> {
+ class UpdateMessageCodec implements MessageCodec<UpdateMessage, UpdateMessage> {
 
   public static final UpdateMessageCodec INSTANCE = new UpdateMessageCodec();
 

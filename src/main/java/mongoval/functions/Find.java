@@ -27,32 +27,34 @@ class Find<O> implements Function<FindMessage, O> {
 
     @Override
     public O apply(final FindMessage message) {
-        Bson hint       = message.hint != null ? Converters.jsObj2Bson.apply(message.hint) : null;
-        Bson max        = message.max != null ? Converters.jsObj2Bson.apply(message.max) : null;
-        Bson projection = message.projection != null ? Converters.jsObj2Bson.apply(message.projection) : null;
-        Bson sort       = message.sort != null ? Converters.jsObj2Bson.apply(message.sort) : null;
-        Bson min        = message.min != null ? Converters.jsObj2Bson.apply(message.min) : null;
-        return converter.apply(requireNonNull(collectionSupplier.get()).find(Converters.jsObj2Bson.apply(message.filter))
-                                                                       .hint(hint)
-                                                                       .max(max)
-                                                                       .projection(projection)
-                                                                       .sort(sort)
-                                                                       .min(min)
-                                                                       .batchSize(message.batchSize)
-                                                                       .comment(message.comment)
-                                                                       .hintString(message.hintString)
-                                                                       .limit(message.limit)
-                                                                       .skip(message.skip)
-                                                                       .maxTime(message.maxTime,
-                                                                        MILLISECONDS
-                                                                       )
-                                                                       .maxAwaitTime(message.maxAwaitTime,
-                                                                             MILLISECONDS
-                                                                            )
-                                                                       .partial(message.partial)
-                                                                       .showRecordId(message.showRecordId)
-                                                                       .oplogReplay(message.oplogReplay)
-                                                                       .noCursorTimeout(message.noCursorTimeout)
-                              );
+            Bson hint       = message.hint != null ? Converters.jsObj2Bson.apply(message.hint) : null;
+            Bson max        = message.max != null ? Converters.jsObj2Bson.apply(message.max) : null;
+            Bson projection = message.projection != null ? Converters.jsObj2Bson.apply(message.projection) : null;
+            Bson sort       = message.sort != null ? Converters.jsObj2Bson.apply(message.sort) : null;
+            Bson min        = message.min != null ? Converters.jsObj2Bson.apply(message.min) : null;
+
+
+            return converter.apply(requireNonNull(collectionSupplier.get()).find(Converters.jsObj2Bson.apply(message.filter))
+                                                                           .hint(hint)
+                                                                           .max(max)
+                                                                           .projection(projection)
+                                                                           .sort(sort)
+                                                                           .min(min)
+                                                                           .batchSize(message.batchSize)
+                                                                           .comment(message.comment)
+                                                                           .hintString(message.hintString)
+                                                                           .limit(message.limit)
+                                                                           .skip(message.skip)
+                                                                           .maxTime(message.maxTime,
+                                                                            MILLISECONDS
+                                                                           )
+                                                                           .maxAwaitTime(message.maxAwaitTime,
+                                                                                 MILLISECONDS
+                                                                                )
+                                                                           .partial(message.partial)
+                                                                           .showRecordId(message.showRecordId)
+                                                                           .oplogReplay(message.oplogReplay)
+                                                                           .noCursorTimeout(message.noCursorTimeout)
+                                  );
     }
 }

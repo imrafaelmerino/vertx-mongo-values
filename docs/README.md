@@ -7,7 +7,7 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/vertx-mongo-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/vertx-mongo-values)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongo-values/0.1)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongo-values/0.1/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongo-values/0.2)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongo-values/0.2/jar)
 [![](https://jitpack.io/v/imrafaelmerino/vertx-mongo-values.svg)](https://jitpack.io/#imrafaelmerino/vertx-mongo-values)
 
 - [Introduction](#introduction)

@@ -16,10 +16,10 @@ public class DataCollectionModule extends MongoModule {
 
     private static final String DELETE_ONE_ADDRESS = "delete_one";
     private static final String INSERT_ONE_ADDRESS = "insert_one";
-    private static final String INSERT_ALL_ADDRESS = "insert_all";
+    private static final String INSERT_MANY_ADDRESS = "insert_all";
     public λ<JsObj, String> insertOne;
     public λ<JsObj, JsObj> deleteOne;
-    public λ<JsArray, JsArray> insertAll;
+    public λ<JsArray, JsArray> insertMany;
     public λ<FindMessage, Optional<JsObj>> findOne;
     public λ<FindMessage, JsArray> findAll;
     public λ<UpdateMessage, JsObj> findOneAndReplace;
@@ -34,7 +34,7 @@ public class DataCollectionModule extends MongoModule {
     @Override
     protected void define() {
         insertOne = this.<JsObj, String>getDeployedVerticle(INSERT_ONE_ADDRESS).ask();
-        insertAll = this.<JsArray, JsArray>getDeployedVerticle(INSERT_ALL_ADDRESS).ask();
+        insertMany = this.<JsArray, JsArray>getDeployedVerticle(INSERT_MANY_ADDRESS).ask();
         λ<FindMessage, JsObj> findOneLambda = deployer.spawnFn(new FindOne(collectionSupplier));
         findOne = m -> findOneLambda.apply(m)
                                     .map(Optional::ofNullable);
@@ -52,7 +52,7 @@ public class DataCollectionModule extends MongoModule {
                                  insertOneResult2HexId
                  )
                 );
-        deployFn(INSERT_ALL_ADDRESS,
+        deployFn(INSERT_MANY_ADDRESS,
                  new InsertMany<>(collectionSupplier,
                                  insertManyResult2JsArrayOfHexIds
                  )
@@ -62,5 +62,6 @@ public class DataCollectionModule extends MongoModule {
                                  deleteResult2JsObj
                  )
                 );
+
     }
 }

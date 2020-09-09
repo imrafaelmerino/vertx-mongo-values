@@ -6,7 +6,7 @@
   <groupId>com.github.imrafaelmerino</groupId>
   <artifactId>vertx-mongo-values</artifactId>
   <packaging>jar</packaging>
-  <version>0.1</version>
+  <version>0.2</version>
   <name>vertx-mongo-values</name>
   <description>Library based on mongo-values and vertx-values that allows you to work with mongodb and vertx using functions and values</description>
   <url>https://github.com/imrafaelmerino/vertx-mongo-values</url>
@@ -39,7 +39,7 @@
     <MAVEN-COMPILER-PLUGIN.VERSION>3.1</MAVEN-COMPILER-PLUGIN.VERSION>
     <MAVEN-COMPILER-PLUGIN.SOURCE>11</MAVEN-COMPILER-PLUGIN.SOURCE>
     <MAVEN-COMPILER-PLUGIN.TARGET>11</MAVEN-COMPILER-PLUGIN.TARGET>
-    <MONGO-VALUES-VERSION>0.1</MONGO-VALUES-VERSION>
+    <MONGO-VALUES-VERSION>0.5</MONGO-VALUES-VERSION>
     <VERTX-VALUES-VERSION>0.7</VERTX-VALUES-VERSION>
     <VERTX-TEST-VERSION>4.0.0.Beta1</VERTX-TEST-VERSION>
     <MONGO-REACTIVE-DRIVER>1.13.1</MONGO-REACTIVE-DRIVER>

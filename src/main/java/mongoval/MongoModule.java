@@ -14,11 +14,16 @@ public abstract class MongoModule extends VertxModule {
     private static final DeploymentOptions DEFAULT_DEPLOYMENT_OPTIONS = new DeploymentOptions().setWorker(true);
     public final Supplier<MongoCollection<JsObj>> collectionSupplier;
 
-
+    /**
+     Creates a new mongo module. The given deploymentOptions instances and worker options are  overwritten to one and
+     true respectively.
+     @param collectionSupplier the mongo collection supplier
+     @param deploymentOptions the verticles deployment options
+     */
     public MongoModule(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                        final DeploymentOptions deploymentOptions
                        ) {
-        super(deploymentOptions);
+        super(deploymentOptions.setWorker(true).setInstances(1));
         this.collectionSupplier = requireNonNull(collectionSupplier);
     }
 

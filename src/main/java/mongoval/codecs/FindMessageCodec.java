@@ -8,7 +8,7 @@ import mongoval.FindMessageBuilder;
 
 import java.util.concurrent.TimeUnit;
 
-public class FindMessageCodec implements MessageCodec<FindMessage, FindMessage> {
+class FindMessageCodec implements MessageCodec<FindMessage, FindMessage> {
 
     static final FindMessageCodec INSTANCE = new FindMessageCodec();
 
