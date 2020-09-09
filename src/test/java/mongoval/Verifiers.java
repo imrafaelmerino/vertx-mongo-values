@@ -12,8 +12,8 @@ import java.util.function.Predicate;
 //todo migrate to verifiers instead of TestFns
 public final class Verifiers {
 
-    private Verifiers(){}
-
+    private Verifiers() {
+    }
 
 
     public static <T> Handler<AsyncResult<T>> pipeTo(final VertxTestContext context) {
@@ -24,7 +24,7 @@ public final class Verifiers {
     }
 
     public static <T> BiConsumer<Val<T>, VertxTestContext> verifySuccess() {
-        return verifySuccess(it->true);
+        return verifySuccess(it -> true);
     }
 
     public static <T> BiConsumer<Val<T>, VertxTestContext> verifySuccess(Predicate<T> predicate) {
