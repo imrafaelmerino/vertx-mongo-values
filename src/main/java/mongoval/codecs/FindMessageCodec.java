@@ -73,7 +73,9 @@ class FindMessageCodec implements MessageCodec<FindMessage, FindMessage> {
         options = options.set(SKIP,
                               JsInt.of(findMessage.skip)
                              );
-
+        options = options.set(LIMIT,
+                              JsInt.of(findMessage.limit)
+                             );
         options = options.set(NO_CURSOR_TIMEOUT,
                               JsBool.of(findMessage.noCursorTimeout)
                              );
@@ -121,15 +123,15 @@ class FindMessageCodec implements MessageCodec<FindMessage, FindMessage> {
                                               );
 
 
-
         return options;
     }
 
     @Override
     public FindMessage decodeFromWire(int pos,
                                       final Buffer buffer) {
-        int length = buffer.getInt(pos);
-        byte[] bytes = buffer.getBytes(pos + 4,
+        int length         = buffer.getInt(pos);
+        pos = pos + 4;
+        byte[] bytes = buffer.getBytes(pos,
                                        pos + length
                                       );
         JsObj options = JsObj.parse(new String(bytes));
@@ -156,13 +158,14 @@ class FindMessageCodec implements MessageCodec<FindMessage, FindMessage> {
                                                              .returnKey(Boolean.TRUE.equals(returnKey))
                                                              .showRecordId(Boolean.TRUE.equals(showRecordId))
                                                              .skip(options.getInt(SKIP))
-                                                             .sort(options.getObj(SORT));
-        if (maxTime != null) builder.maxTime(maxTime,
-                                             TimeUnit.MILLISECONDS
-                                            );
-        if (maxAwaitTime != null) builder.maxAwaitTime(maxAwaitTime,
-                                                       TimeUnit.MILLISECONDS
-                                                      );
+                                                             .sort(options.getObj(SORT))
+                                                             .maxTime(maxTime,
+                                                                      TimeUnit.MILLISECONDS
+                                                                     )
+                                                             .maxAwaitTime(maxAwaitTime,
+                                                                           TimeUnit.MILLISECONDS
+                                                                          );
+
         return builder.create();
 
     }
