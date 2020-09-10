@@ -8,7 +8,7 @@
   <packaging>jar</packaging>
   <version>0.2</version>
   <name>vertx-mongo-values</name>
-  <description>Library based on mongo-values and vertx-values that allows you to work with mongodb and vertx using functions and values</description>
+  <description>It's a Java library to work with Mongo in Vertx following a functional and reactive style with vertx-values and mongo-values.</description>
   <url>https://github.com/imrafaelmerino/vertx-mongo-values</url>
   <licenses>
     <license>
@@ -40,7 +40,7 @@
     <MAVEN-COMPILER-PLUGIN.SOURCE>11</MAVEN-COMPILER-PLUGIN.SOURCE>
     <MAVEN-COMPILER-PLUGIN.TARGET>11</MAVEN-COMPILER-PLUGIN.TARGET>
     <MONGO-VALUES-VERSION>0.5</MONGO-VALUES-VERSION>
-    <VERTX-VALUES-VERSION>0.7</VERTX-VALUES-VERSION>
+    <VERTX-VALUES-VERSION>0.8</VERTX-VALUES-VERSION>
     <VERTX-TEST-VERSION>4.0.0.Beta1</VERTX-TEST-VERSION>
     <MONGO-REACTIVE-DRIVER>1.13.1</MONGO-REACTIVE-DRIVER>
   </properties>
