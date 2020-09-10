@@ -54,7 +54,7 @@ public class Converters {
     public static final Function<InsertOneResult, String> insertOneResult2HexId =
             result -> objectId2Hex.apply(result.getInsertedId());
 
-    public static final Function<InsertOneResult, JsObj> insertOneResult2ObjVal =
+    public static final Function<InsertOneResult, JsObj> insertOneResult2JsObj =
             result -> JsObj.of("insertedId",
                                JsStr.of(insertOneResult2HexId.apply(result)),
                                "wasAcknowledged",
