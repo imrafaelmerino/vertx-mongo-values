@@ -12,8 +12,10 @@ import mongoval.codecs.RegisterMongoValuesCodecs;
 import mongovalues.JsValuesRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import vertxval.Deployer;
 import vertxval.codecs.RegisterJsValuesCodecs;
 import vertxval.exp.Val;
 
@@ -24,6 +26,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
@@ -40,6 +43,8 @@ public class MongoOpsIntegrationTest {
 
     static MongoClientSettings settings;
 
+    private static Deployer deployer;
+
     static {
 
         ConnectionString connString = new ConnectionString(
@@ -50,6 +55,7 @@ public class MongoOpsIntegrationTest {
                                       .retryWrites(true)
                                       .codecRegistry(JsValuesRegistry.INSTANCE)
                                       .build();
+
 
     }
 
@@ -71,6 +77,8 @@ public class MongoOpsIntegrationTest {
                             vertx.deployVerticle(dataModule)
                            )
                        .onComplete(TestFns.pipeTo(testContext));
+
+        deployer = new Deployer(vertx);
     }
 
     @Test
@@ -366,8 +374,8 @@ public class MongoOpsIntegrationTest {
 
                                    );
         JsObj sortDesc = JsObj.of("age",
-                                 JsInt.of(-1)
-                                );
+                                  JsInt.of(-1)
+                                 );
         JsArray array = JsArray.of(JsObj.of("age",
                                             JsInt.of(16),
                                             "name",
@@ -400,6 +408,235 @@ public class MongoOpsIntegrationTest {
                         context
                        );
 
+    }
+
+    @Test
+    public void test_replace(VertxTestContext context) {
+
+        int keyValue = random.nextInt();
+
+        JsObj filter = JsObj.of("key",
+                                JsInt.of(keyValue)
+                               );
+
+        JsObj obj = filter.union(JsObj.of("string",
+                                          JsStr.of("a"),
+                                          "int",
+                                          JsInt.of(Integer.MAX_VALUE),
+                                          "long",
+                                          JsLong.of(Long.MAX_VALUE),
+                                          "boolean",
+                                          TRUE,
+                                          "double",
+                                          JsDouble.of(1.5d),
+                                          "decimal",
+                                          JsBigDec.of(new BigDecimal("1.54456")),
+                                          "array",
+                                          JsArray.of(1,
+                                                     2,
+                                                     3
+                                                    ),
+                                          "null",
+                                          NULL,
+                                          "instant",
+                                          JsInstant.of(Instant.now(Clock.tickMillis(ZoneId.of("UTC")))),
+                                          "biginteger",
+                                          JsBigInt.of(new BigInteger("11111111111111111111111"))
+                                         )
+                                );
+
+        JsObj newObj = filter.union(JsObj.of("string",
+                                             JsStr.of("new"),
+                                             "int",
+                                             JsInt.of(Integer.MIN_VALUE),
+                                             "long",
+                                             JsLong.of(Long.MIN_VALUE),
+                                             "boolean",
+                                             FALSE,
+                                             "double",
+                                             JsDouble.of(10.5d),
+                                             "decimal",
+                                             JsBigDec.of(new BigDecimal("1.544456")),
+                                             "array",
+                                             JsArray.of(1,
+                                                        2,
+                                                        3,
+                                                        4,
+                                                        5
+                                                       ),
+                                             "null",
+                                             NULL,
+                                             "instant",
+                                             JsInstant.of(Instant.now(Clock.tickMillis(ZoneId.of("UTC")))),
+                                             "biginteger",
+                                             JsBigInt.of(new BigInteger("21111111111111111111111"))
+
+                                            ));
+
+        dataModule.insertOne
+                .apply(obj)
+                .flatMap(id -> {
+                             System.out.println("id " + id);
+                             return dataModule.replaceOne.apply(new UpdateMessage(filter,
+                                                                                  newObj
+                                                                )
+                                                               );
+                         }
+                        )
+                .flatMap(r -> {
+                    System.out.println("replaceOne result " + r);
+                    return dataModule.findOne.apply(FindMessage.ofFilter(filter));
+                })
+                .onComplete(
+                        TestFns.pipeTo(result -> {
+                                           System.out.println("findOne result " + result);
+                                           assertEquals(Optional.of(newObj),
+                                                        result.map(it -> it.delete("_id"))
+                                                       );
+                                       },
+                                       context
+                                      )
+                           )
+                .get();
+    }
+
+    @Test
+    public void test_count(VertxTestContext context) {
+        JsInt key = JsInt.of(random.nextInt());
+        JsObj filter = JsObj.of("key",
+                                key
+                               );
+        Verifiers.<Long>verifySuccess(count -> count == 2)
+                .accept(dataModule.insertMany.apply(JsArray.of(JsObj.of("a",
+                                                                        JsStr.of("a")
+                                                                       )
+                                                                    .union(filter),
+                                                               JsObj.of("b",
+                                                                        JsStr.of("b")
+                                                                       )
+                                                                    .union(filter)
+                                                              )
+                                                   )
+                                             .flatMap(r -> {
+                                                 System.out.println(r);
+                                                 return dataModule.count.apply(filter);
+                                             }),
+                        context
+                       );
+    }
+
+    @Test
+    public void test_update_many(VertxTestContext context) {
+        JsInt key = JsInt.of(random.nextInt());
+
+        JsObj filter = JsObj.of("key",
+                                key
+                               );
+
+        JsObj projection = JsObj.of("_id",
+                                    JsInt.of(0),
+                                    "key",
+                                    JsInt.of(0)
+                                   );
+
+        JsObj update = JsObj.of("$unset",
+                                JsObj.of("a",
+                                         JsStr.of("")
+                                        )
+                               );
+
+        JsObj obj = JsObj.of("a",
+                             JsInt.of(1),
+                             "b",
+                             JsInt.of(2)
+                            );
+
+
+        Verifiers.<JsArray>verifySuccess(array -> {
+                                             System.out.println(array);
+                                             return JsArray.of(JsObj.of("b",
+                                                                        JsInt.of(2)),
+                                                               JsObj.of("b",
+                                                                        JsInt.of(2))).equals(array);
+                                         }
+                                        )
+                .accept(dataModule.insertMany.apply(JsArray.of(obj.union(filter),
+                                                               obj.union(filter)
+                                                              ))
+                                             .flatMap($ -> dataModule.updateMany.apply(new UpdateMessage(filter,
+                                                                                                         update
+                                                                                       )
+                                                                                      )
+                                                     )
+                                             .flatMap(updateResult -> {
+                                                 System.out.println(updateResult);
+                                                 return dataModule.findAll.apply(FindMessage.ofFilter(filter,
+                                                                                                      projection));
+                                             }),
+                        context
+                       );
+    }
+
+    @Test
+    public void test_update_one(VertxTestContext context) {
+        JsInt key = JsInt.of(random.nextInt());
+
+        JsObj filter = JsObj.of("key",
+                                key
+                               );
+
+        JsObj update = JsObj.of("$unset",
+                                JsObj.of("a",
+                                         JsStr.of("")
+                                        )
+                               );
+
+        JsObj obj = JsObj.of("a",
+                             JsInt.of(1),
+                             "b",
+                             JsInt.of(2)
+                            );
+
+
+        Verifiers.<Optional<JsObj>>verifySuccess(optObj -> {
+                                                     System.out.println(optObj);
+                                                     return optObj.isPresent() && !optObj.get()
+                                                                                         .containsKey("a");
+                                                 }
+                                                )
+                .accept(dataModule.insertOne.apply(obj.union(filter))
+                                            .flatMap($ -> dataModule.updateOne.apply(new UpdateMessage(filter,
+                                                                                                       update
+                                                                                     )
+                                                                                    )
+                                                    )
+                                            .flatMap(updateResult -> {
+                                                System.out.println(updateResult);
+                                                return dataModule.findOne.apply(FindMessage.ofFilter(filter));
+                                            }),
+                        context
+                       );
+
+    }
+
+    @Test
+    @Disabled //test only valid for replicaSet
+    public void test_watcher(final VertxTestContext context,
+                             final Vertx vertx) {
+        AtomicInteger counter = new AtomicInteger();
+
+        deployer.deployVerticle(new Watcher(dataModule.collectionSupplier,
+                                            stream -> stream.forEach($ -> counter.addAndGet(1))
+        ))
+                .onSuccess(id ->
+                                   Verifiers.<String>verifySuccess(it -> counter.get() == 1)
+                                           .accept(dataModule.insertOne.apply(JsObj.of("a",
+                                                                                       TRUE
+                                                                                      )
+                                                                             ),
+                                                   context
+                                                  ))
+                .get();
     }
 
 }

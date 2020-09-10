@@ -66,7 +66,6 @@ public class UpdateMany<O> implements Function<UpdateMessage, O> {
                                                            jsObj2Bson.apply(message.update),
                                                            options
                                                           )
-                                    )
-                ;
+                                    );
     }
 }
