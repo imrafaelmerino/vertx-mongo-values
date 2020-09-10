@@ -9,7 +9,7 @@ import mongoval.UpdateMessage;
 
   public static final UpdateMessageCodec INSTANCE = new UpdateMessageCodec();
 
-  private void UpdateMessage(){};
+  private UpdateMessageCodec(){}
 
   @Override
   public void encodeToWire(final Buffer buffer,
