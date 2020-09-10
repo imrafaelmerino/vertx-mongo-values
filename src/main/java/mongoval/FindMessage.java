@@ -2,6 +2,9 @@ package mongoval;
 
 import jsonvalues.JsObj;
 
+
+import java.util.Objects;
+
 import static java.util.Objects.requireNonNull;
 
 public class FindMessage {
@@ -14,17 +17,17 @@ public class FindMessage {
                 final JsObj max,
                 final JsObj min,
                 final String hintString,
-                final Integer skip,
-                final Integer limit,
+                final int skip,
+                final int limit,
                 final boolean showRecordId,
                 final boolean returnKey,
                 final String comment,
                 final boolean noCursorTimeout,
                 final boolean partial,
                 final boolean oplogReplay,
-                final Integer batchSize,
-                final Long maxAwaitTime,
-                final Long maxTime) {
+                final int batchSize,
+                final long maxAwaitTime,
+                final long maxTime) {
         this.filter = requireNonNull(filter);
         this.sort = sort;
         this.projection = projection;
@@ -60,9 +63,9 @@ public class FindMessage {
 
     public final String hintString;
 
-    public final Integer skip;
+    public final int skip;
 
-    public final Integer limit;
+    public final int limit;
 
     public final boolean showRecordId;
 
@@ -76,11 +79,11 @@ public class FindMessage {
 
     public final boolean oplogReplay;
 
-    public final Integer batchSize;
+    public final int batchSize;
 
-    public final Long maxAwaitTime;
+    public final long maxAwaitTime;
 
-    public final Long maxTime;
+    public final long maxTime;
 
 
     public static FindMessage ofFilter(final JsObj filter) {
@@ -95,6 +98,68 @@ public class FindMessage {
                                        .create();
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final FindMessage that = (FindMessage) o;
+        return skip == that.skip &&
+                limit == that.limit &&
+                showRecordId == that.showRecordId &&
+                returnKey == that.returnKey &&
+                noCursorTimeout == that.noCursorTimeout &&
+                partial == that.partial &&
+                oplogReplay == that.oplogReplay &&
+                batchSize == that.batchSize &&
+                maxAwaitTime == that.maxAwaitTime &&
+                maxTime == that.maxTime &&
+                filter.equals(that.filter) &&
+                Objects.equals(sort,
+                               that.sort
+                              ) &&
+                Objects.equals(projection,
+                               that.projection
+                              ) &&
+                Objects.equals(hint,
+                               that.hint
+                              ) &&
+                Objects.equals(max,
+                               that.max
+                              ) &&
+                Objects.equals(min,
+                               that.min
+                              ) &&
+                Objects.equals(hintString,
+                               that.hintString
+                              ) &&
+                Objects.equals(comment,
+                               that.comment
+                              );
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(filter,
+                            sort,
+                            projection,
+                            hint,
+                            max,
+                            min,
+                            hintString,
+                            skip,
+                            limit,
+                            showRecordId,
+                            returnKey,
+                            comment,
+                            noCursorTimeout,
+                            partial,
+                            oplogReplay,
+                            batchSize,
+                            maxAwaitTime,
+                            maxTime
+                           );
+    }
+
     public static FindMessage ofFilter(final JsObj filter,
                                        final JsObj projection,
                                        final JsObj sort) {
@@ -103,4 +168,7 @@ public class FindMessage {
                                        .sort(requireNonNull(sort))
                                        .create();
     }
+
+
+
 }
