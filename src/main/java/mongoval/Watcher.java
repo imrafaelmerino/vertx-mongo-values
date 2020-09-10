@@ -5,6 +5,7 @@ import com.mongodb.client.ChangeStreamIterable;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Promise;
 import jsonvalues.JsObj;
 
 import java.util.function.Consumer;
@@ -33,12 +34,17 @@ public class Watcher extends AbstractVerticle {
     }
 
     @Override
-    public void start() {
-        if (session != null) consumer.accept(collectionSupplier.get()
-                                                               .watch(session));
-        else
-            consumer.accept(collectionSupplier.get()
-                                              .watch());
+    public void start(final Promise<Void> promise) {
+        try {
+            if (session != null) consumer.accept(collectionSupplier.get()
+                                                                   .watch(session));
+            else
+                consumer.accept(collectionSupplier.get()
+                                                  .watch());
+            promise.complete();
+        } catch (Exception e) {
+           promise.fail(e);
+        }
     }
 
 
