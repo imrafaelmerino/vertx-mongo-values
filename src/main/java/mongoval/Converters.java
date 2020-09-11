@@ -1,5 +1,6 @@
 package mongoval;
 
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.result.DeleteResult;
@@ -21,7 +22,8 @@ import java.util.stream.Collectors;
 public class Converters {
 
 
-    private Converters(){}
+    private Converters() {
+    }
 
     public static final Function<JsObj, Bson> jsObj2Bson = obj ->
             new BsonDocumentWrapper<>(obj,
@@ -102,7 +104,7 @@ public class Converters {
     public static final Function<InsertManyResult, JsArray> insertManyResult2JsArrayOfHexIds =
             result -> {
                 Map<Integer, BsonValue> map   = result.getInsertedIds();
-                JsArray array = JsArray.empty();
+                JsArray                 array = JsArray.empty();
                 for (final Map.Entry<Integer, BsonValue> e : map.entrySet()) {
                     array = array.append(JsStr.of(objectId2Hex.apply(e.getValue())));
                 }
@@ -115,4 +117,14 @@ public class Converters {
                                "was_acknowledged",
                                JsBool.of(result.wasAcknowledged())
                               );
+
+
+    public static final Function<AggregateIterable<JsObj>, JsArray> aggregateResult2JsArray =
+            iter -> {
+                JsArray result = JsArray.empty();
+                for (JsObj obj : iter) {
+                    result = result.append(obj);
+                }
+                return result;
+            };
 }

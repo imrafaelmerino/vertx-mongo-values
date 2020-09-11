@@ -29,6 +29,7 @@ public class DataCollectionModule extends MongoModule {
     public λ<UpdateMessage, JsObj> updateOne;
     public λ<JsObj, Long> count;
     public λ<UpdateMessage, JsObj> updateMany;
+    public λ<JsArray, JsArray> aggregate;
 
     private λ<JsObj, JsObj> findOneAndDelete;
     private λ<UpdateMessage, JsObj> findOneAndUpdate;
@@ -57,7 +58,10 @@ public class DataCollectionModule extends MongoModule {
         findOneAndReplace = deployer.spawnFn(new FindOneAndReplace(collectionSupplier));
         findOneAndDelete = deployer.spawnFn(new FindOneAndDelete(collectionSupplier));
         findOneAndUpdate = deployer.spawnFn(new FindOneAndUpdate(collectionSupplier));
-
+        aggregate = deployer.spawnFn(new Aggregate<>(collectionSupplier,
+                                                     aggregateResult2JsArray
+                                     )
+                                    );
     }
 
     @Override

@@ -108,6 +108,12 @@ public class TestCodecs {
 
     }
 
+    @Test
+    public void test_aggregate(){
+
+
+    }
+
 }
 
 

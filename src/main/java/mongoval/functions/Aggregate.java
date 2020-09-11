@@ -18,18 +18,19 @@ import static java.util.Objects.requireNonNull;
 public class Aggregate<O> implements Function<JsArray, O> {
 
     public final Function<AggregateIterable<JsObj>, O> resultConverter;
-    public final Supplier<MongoCollection<JsObj>> collection;
+    public final Supplier<MongoCollection<JsObj>> collectionSupplier;
 
-    public Aggregate(final Function<AggregateIterable<JsObj>, O> resultConverter,
-                     final Supplier<MongoCollection<JsObj>> collection) {
+    public Aggregate(final Supplier<MongoCollection<JsObj>> collectionSupplier,
+                     final Function<AggregateIterable<JsObj>, O> resultConverter
+                     ) {
         this.resultConverter = resultConverter;
-        this.collection = collection;
+        this.collectionSupplier = collectionSupplier;
     }
 
     @Override
     public O apply(final JsArray m) {
         List<Bson>             pipeline   = Converters.jsArray2ListOfBson.apply(m);
-        MongoCollection<JsObj> collection = requireNonNull(this.collection.get());
+        MongoCollection<JsObj> collection = requireNonNull(this.collectionSupplier.get());
         return resultConverter.apply(collection.aggregate(pipeline));
     }
 }

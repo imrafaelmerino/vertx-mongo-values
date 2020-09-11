@@ -555,9 +555,13 @@ public class MongoOpsIntegrationTest {
         Verifiers.<JsArray>verifySuccess(array -> {
                                              System.out.println(array);
                                              return JsArray.of(JsObj.of("b",
-                                                                        JsInt.of(2)),
+                                                                        JsInt.of(2)
+                                                                       ),
                                                                JsObj.of("b",
-                                                                        JsInt.of(2))).equals(array);
+                                                                        JsInt.of(2)
+                                                                       )
+                                                              )
+                                                           .equals(array);
                                          }
                                         )
                 .accept(dataModule.insertMany.apply(JsArray.of(obj.union(filter),
@@ -571,7 +575,8 @@ public class MongoOpsIntegrationTest {
                                              .flatMap(updateResult -> {
                                                  System.out.println(updateResult);
                                                  return dataModule.findAll.apply(FindMessage.ofFilter(filter,
-                                                                                                      projection));
+                                                                                                      projection
+                                                                                                     ));
                                              }),
                         context
                        );
@@ -637,6 +642,84 @@ public class MongoOpsIntegrationTest {
                                                    context
                                                   ))
                 .get();
+    }
+
+
+    @Test
+    public void test_aggregate(VertxTestContext context) {
+        JsInt key = JsInt.of(random.nextInt());
+
+        JsObj filter = JsObj.of("key",
+                                key
+                               );
+        JsArray array = JsArray.of(JsObj.of("cust_id",
+                                            JsStr.of("A123"),
+                                            "amount",
+                                            JsInt.of(500),
+                                            "status",
+                                            JsStr.of("A")
+                                           )
+                                        .union(filter),
+                                   JsObj.of("cust_id",
+                                            JsStr.of("A123"),
+                                            "amount",
+                                            JsInt.of(250),
+                                            "status",
+                                            JsStr.of("A")
+                                           )
+                                        .union(filter),
+                                   JsObj.of("cust_id",
+                                            JsStr.of("B212"),
+                                            "amount",
+                                            JsInt.of(200),
+                                            "status",
+                                            JsStr.of("A")
+                                           )
+                                        .union(filter),
+                                   JsObj.of("cust_id",
+                                            JsStr.of("A123"),
+                                            "amount",
+                                            JsInt.of(300),
+                                            "status",
+                                            JsStr.of("D")
+                                           )
+                                        .union(filter)
+                                  );
+
+        JsArray pipeline = JsArray.of(JsObj.of("$match",
+                                               JsObj.of("status",
+                                                        JsStr.of("A")
+                                                       )
+                                                    .union(filter)
+                                              ),
+                                      JsObj.of("$group",
+                                               JsObj.of("_id",
+                                                        JsStr.of("$cust_id"),
+                                                        "total",
+                                                        JsObj.of("$sum",
+                                                                 JsStr.of("$amount")
+                                                                )
+                                                       )
+                                              )
+                                     );
+        JsArray aggregationExpectedResult = JsArray.of(JsObj.of("_id",
+                                                                JsStr.of("B212")
+                ,
+                                                                "total",
+                                                                JsInt.of(200)
+                                                               ),
+                                                       JsObj.of("_id",
+                                                                JsStr.of("A123")
+                                                               ,
+                                                                "total",
+                                                                JsInt.of(750)
+                                                               )
+                                                      );
+        Verifiers.<JsArray>verifySuccess(aggregationExpectedResult::equals
+                                        ).accept(dataModule.insertMany.apply(array)
+                                                                      .flatMap(ids -> dataModule.aggregate.apply(pipeline)),
+                                                 context
+                                                );
     }
 
 }
