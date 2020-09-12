@@ -3,6 +3,7 @@ package mongoval;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.connection.SocketSettings;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
@@ -24,8 +25,10 @@ import java.math.BigInteger;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static jsonvalues.JsBool.FALSE;
@@ -45,6 +48,7 @@ public class MongoOpsIntegrationTest {
 
     private static Deployer deployer;
 
+
     static {
 
         ConnectionString connString = new ConnectionString(
@@ -52,18 +56,17 @@ public class MongoOpsIntegrationTest {
         );
         settings = MongoClientSettings.builder()
                                       .applyConnectionString(connString)
-                                      .retryWrites(true)
                                       .codecRegistry(JsValuesRegistry.INSTANCE)
                                       .build();
 
 
     }
 
-
     @BeforeAll
     public static void prepare(Vertx vertx,
                                VertxTestContext testContext
                               ) {
+
         MongoVertxClient mongoClient = new MongoVertxClient(settings);
 
         dataModule = new DataCollectionModule(mongoClient.getCollection("test",
@@ -722,4 +725,116 @@ public class MongoOpsIntegrationTest {
                                                 );
     }
 
+    @Test
+    public void test_delete_all(VertxTestContext context) {
+
+        int key = random.nextInt();
+        JsObj filter = JsObj.of("key",
+                                JsInt.of(key)
+                               );
+        Val<JsArray> val = dataModule.insertMany
+                .apply(JsArray.of(JsObj.of("name",
+                                           JsStr.of("Rafa"),
+                                           "age",
+                                           JsInt.of(38)
+                                          )
+                                       .union(filter),
+                                  JsObj.of("name",
+                                           JsStr.of("Alberto"),
+                                           "age",
+                                           JsInt.of(10)
+                                          )
+                                       .union(filter),
+                                  JsObj.of("name",
+                                           JsStr.of("Josefa"),
+                                           "age",
+                                           JsInt.of(49)
+                                          )
+                                       .union(filter)
+                                 )
+                      )
+                .flatMap(ids -> dataModule.deleteMany.apply(filter))
+                .flatMap(r -> dataModule.findAll.apply(FindMessage.ofFilter(filter)));
+
+
+        Verifiers.verifySuccess(JsArray::isEmpty)
+                 .accept(val,
+                         context
+                        );
+
+
+    }
+
+
+    @Test
+    public void test_find_one_update(VertxTestContext context) {
+
+
+        JsInt key = JsInt.of(random.nextInt());
+
+        JsObj filter = JsObj.of("key",
+                                key
+                               );
+
+
+        JsObj update = JsObj.of("$unset",
+                                JsObj.of("a",
+                                         JsStr.of("")
+                                        )
+                               );
+
+        JsObj obj = JsObj.of("a",
+                             JsInt.of(1),
+                             "b",
+                             JsInt.of(2)
+                            );
+
+        Verifiers.<Optional<JsObj>>verifySuccess(o -> {
+            System.out.println(o.get());
+            return Objects.equals(JsObj.of("b",
+                                           JsInt.of(2)
+                                          )
+                                       .union(filter),
+                                  o.get()
+                                   .delete("_id")
+                                 );
+        })
+                .accept(dataModule.insertOne.apply(obj.union(filter))
+                                            .flatMap($ -> dataModule.findOneAndUpdate.apply(new UpdateMessage(filter,
+                                                                                                              update
+                                                                                            )
+                                                                                           )
+                                                    )
+                                            .flatMap(r -> dataModule.findOne.apply(FindMessage.ofFilter(filter))),
+                        context
+                       );
+
+    }
+
+    @Test
+    public void test_find_one_delete(VertxTestContext context) {
+
+        JsInt key = JsInt.of(random.nextInt());
+
+        JsObj filter = JsObj.of("key",
+                                key
+                               );
+
+
+        JsObj obj = JsObj.of("a",
+                             JsInt.of(1),
+                             "b",
+                             JsInt.of(2)
+                            );
+
+        Verifiers.<Optional<JsObj>>verifySuccess(Optional::isEmpty).accept(dataModule.insertOne.apply(obj.union(filter))
+                                                                                               .flatMap($ -> dataModule.findOneAndDelete.apply(filter)
+                                                                                                       )
+                                                                                               .flatMap(r -> {
+                                                                                                   System.out.println(r);
+                                                                                                   return dataModule.findOne.apply(FindMessage.ofFilter(filter));
+                                                                                               }),
+                                                                           context
+                                                                          );
+    }
 }

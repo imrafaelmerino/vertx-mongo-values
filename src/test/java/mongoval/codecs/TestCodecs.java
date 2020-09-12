@@ -56,9 +56,12 @@ public class TestCodecs {
                                                                     buffer);
 
                 };
+
         Assertions.assertEquals(message,
                                 identity.apply(message));
+
         FindMessage a = FindMessage.ofFilter(JsObj.EMPTY);
+
         Assertions.assertEquals(a,
                                 identity.apply(a));
 

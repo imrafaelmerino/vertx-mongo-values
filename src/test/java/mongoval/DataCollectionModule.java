@@ -19,9 +19,12 @@ public class DataCollectionModule extends MongoModule {
     private static final String REPLACE_ONE_ADDRESS = "replace_one";
     private static final String INSERT_ONE_ADDRESS = "insert_one";
     private static final String INSERT_MANY_ADDRESS = "insert_all";
+    private static final String DELETE_MANY_ADDRESS = "delete_all";
+
     public λ<JsObj, String> insertOne;
     public λ<JsObj, JsObj> deleteOne;
     public λ<JsArray, JsArray> insertMany;
+    public λ<JsObj, JsObj> deleteMany;
     public λ<FindMessage, Optional<JsObj>> findOne;
     public λ<FindMessage, JsArray> findAll;
     public λ<UpdateMessage, JsObj> findOneAndReplace;
@@ -30,9 +33,8 @@ public class DataCollectionModule extends MongoModule {
     public λ<JsObj, Long> count;
     public λ<UpdateMessage, JsObj> updateMany;
     public λ<JsArray, JsArray> aggregate;
-
-    private λ<JsObj, JsObj> findOneAndDelete;
-    private λ<UpdateMessage, JsObj> findOneAndUpdate;
+    public λ<JsObj, JsObj> findOneAndDelete;
+    public λ<UpdateMessage, JsObj> findOneAndUpdate;
 
     public DataCollectionModule(final Supplier<MongoCollection<JsObj>> collection) {
         super(collection);
@@ -43,6 +45,7 @@ public class DataCollectionModule extends MongoModule {
     protected void define() {
         insertOne = this.<JsObj, String>getDeployedVerticle(INSERT_ONE_ADDRESS).ask();
         insertMany = this.<JsArray, JsArray>getDeployedVerticle(INSERT_MANY_ADDRESS).ask();
+        deleteMany = this.<JsObj, JsObj>getDeployedVerticle(DELETE_MANY_ADDRESS).ask();
         λ<FindMessage, JsObj> findOneLambda = deployer.spawnFn(new FindOne(collectionSupplier));
         findOne = m -> findOneLambda.apply(m)
                                     .map(Optional::ofNullable);
@@ -74,6 +77,11 @@ public class DataCollectionModule extends MongoModule {
         deployFn(INSERT_MANY_ADDRESS,
                  new InsertMany<>(collectionSupplier,
                                   insertManyResult2JsArrayOfHexIds
+                 )
+                );
+        deployFn(DELETE_MANY_ADDRESS,
+                 new DeleteMany<>(collectionSupplier,
+                                  deleteResult2JsObj
                  )
                 );
         deployFn(DELETE_ONE_ADDRESS,
