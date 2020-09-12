@@ -1,25 +1,39 @@
 # VERTx-MONGO-VALUES
-## v0.3  ( Wed Sep 09 2020 08:15:28 GMT+0200 (Central European Summer Time) )
+## v0.3  ( Sat Sep 12 2020 19:42:20 GMT+0200 (Central European Summer Time) )
+
+## Bug Fixes
+  - 🐛 bug buffer position is not updated well
+  ([a05365e3](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/a05365e38c76c4fa56afa9fd11e4ade7fc343547))
 
 ## Features
-  - 🎸 upgrade mongo-values version
-  ([57982cad](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/57982cad72828a70a10267d52130009c3160db49))
-  - 🎸 MongoModule overwrite some deployment options
-  ([de4139bc](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/de4139bcacd81ab2b00694f4a27ac1f13b84b9a2))
+  - 🎸 added promise in start method of watcher
+  ([98f987dc](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/98f987dcb4f050135f906b0ee8868f7a2c852a42))
+  - 🎸 added private constructor
+  ([5c415776](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/5c415776850f7e63aa057f75e9b38d44a9ba7db1))
+  - 🎸 added equals and hashcode into message objects
+  ([f0035b60](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/f0035b6031150dad80f0ef98b2c17f5a28d1708c))
 
 ## Documentation
-  - ✏️ javadoc
-  ([b663e763](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/b663e7637d30a956130f81c39efa4b805016e98e))
+  - ✏️ update library description
+  ([29cbf98a](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/29cbf98ab57d5d845a758d6d4f09f878cbc330c7))
 
 ## Refactor
-  - 💡 MongoVertxClient
-  ([4c08a896](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/4c08a896c0ef3c8271871f2038d2c0f5e7ee5384))
-  - 💡 message codecs are not public anymore
-  ([beaedce5](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/beaedce51c9a49c9a76cdec0744d43bea1836871))
-  - 💡 remove of final fields in class MongoVertxClient
-  ([dc763e93](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/dc763e938178a479a03f88466c60b83fa00056e2))
-  - 💡 following some sonar rules
-  ([5517158b](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/5517158bd7617c9afdc8f806d1e341b300c37c73))
+  - 💡 rename function
+  ([0fd6343e](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/0fd6343e456ebc645cda2481b83904fad4166bef))
+
+
+
+
+## Test
+  - 💍 more tests
+  ([1261a201](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/1261a2012049512d5340b98708daecb749fb8743))
+  - 💍 aggregate function tests
+  ([44bb2ce4](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/44bb2ce4394fed7389792a617b2e19c788a7ffe9))
+  - 💍 added more tests
+  ([6b1c5c8d](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/6b1c5c8d4ae5b3d43851fdfdd9c6890e62092286))
+  - 💍 message codec tests
+  ([b63ec74e](https://github.com/imrafaelmerino/vertx-mongo-actors/commit/b63ec74e338df574a017f068ad957e0d71d9e926))
+
 
 
 
