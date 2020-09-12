@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>vertx-mongo-values</artifactId>
     <packaging>jar</packaging>
-    <version>0.2</version>
+    <version>0.3</version>
     <name>vertx-mongo-values</name>
     <description>It's a Java library to work with Mongo in Vertx following a functional and reactive style with
         vertx-values and mongo-values.

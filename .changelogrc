@@ -1,8 +1,8 @@
 {
     "app_name": "vertx-mongo-values",
-    "branch" : "v0.2",
+    "branch" : "v0.3",
     "repo_url": "",
-    "version_name" : "v0.2",
+    "version_name" : "v0.3",
     "file": "docs/CHANGELOG.md",
     "template": ".gitlog-template.md",
     "sections": [

@@ -1,5 +1,5 @@
 # VERTx-MONGO-VALUES
-## v0.2  ( Wed Sep 09 2020 08:15:28 GMT+0200 (Central European Summer Time) )
+## v0.3  ( Wed Sep 09 2020 08:15:28 GMT+0200 (Central European Summer Time) )
 
 ## Features
   - 🎸 upgrade mongo-values version
