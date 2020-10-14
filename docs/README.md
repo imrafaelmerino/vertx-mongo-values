@@ -1,0 +1,20 @@
+[![Build Status](https://travis-ci.org/imrafaelmerino/vertx-mongo-values.svg?branch=master)](https://travis-ci.org/imrafaelmerino/vertx-mongo-values)
+[![CircleCI](https://circleci.com/gh/imrafaelmerino/vertx-mongo-values/tree/master.svg)](https://circleci.com/gh/imrafaelmerino/vertx-mongo-values/tree/master)
+[![codecov](https://codecov.io/gh/imrafaelmerino/vertx-mongo-values/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/vertx-values)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_vertx-mongo-values&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_vertx-mongo-values)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_vertx-mongo-values&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_vertx-mongo-values)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+
+[![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/vertx-mongo-values.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/vertx-mongo-values)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongo-values/0.3)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongo-values/0.3/jar)
+[![](https://jitpack.io/v/imrafaelmerino/vertx-mongo-values.svg)](https://jitpack.io/#imrafaelmerino/vertx-mongo-values)
+
+- [Introduction](#introduction)
+- [What to use _vertx-mongo-values_ for and when to use it](#whatfor)
+- [When not to use it](#notwhatfor)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Want to help](#wth)
+- [Develop](#develop)
+- [Related projects](#rp)
