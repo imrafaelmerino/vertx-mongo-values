@@ -1,3 +1,6 @@
+<img src="https://github.com/imrafaelmerino/vertx-mongodb-effect/blob/master/logo/package_highres_swe2n4mg/black/full/black_logo_white_background.png" width="250" height="150"/>
+
+
 [![Build Status](https://travis-ci.org/imrafaelmerino/vertx-mongodb-effect.svg?branch=master)](https://travis-ci.org/imrafaelmerino/vertx-mongodb-effect)
 [![CircleCI](https://circleci.com/gh/imrafaelmerino/vertx-mongodb-effect/tree/master.svg)](https://circleci.com/gh/imrafaelmerino/vertx-mongodb-effect/tree/master)
 [![codecov](https://codecov.io/gh/imrafaelmerino/vertx-mongodb-effect/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/vertx-values)
@@ -7,8 +10,9 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/vertx-mongodb-effect.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/vertx-mongodb-effect)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/0.1)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/0.3/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/0.3)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/0.3/jar)
 [![](https://jitpack.io/v/imrafaelmerino/vertx-mongodb-effect.svg)](https://jitpack.io/#imrafaelmerino/vertx-mongodb-effect)
+
 
 - [Introduction](#introduction)
 - [What to use _vertx-mongodb-effect_ for and when to use it](#whatfor)
