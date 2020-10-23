@@ -1,8 +1,6 @@
 <img src="https://github.com/imrafaelmerino/vertx-mongodb-effect/blob/master/logo/package_highres_swe2n4mg/black/full/black_logo_white_background.png" width="250" height="150"/>
 
-
 [![Build Status](https://travis-ci.org/imrafaelmerino/vertx-mongodb-effect.svg?branch=master)](https://travis-ci.org/imrafaelmerino/vertx-mongodb-effect)
-[![CircleCI](https://circleci.com/gh/imrafaelmerino/vertx-mongodb-effect/tree/master.svg)](https://circleci.com/gh/imrafaelmerino/vertx-mongodb-effect/tree/master)
 [![codecov](https://codecov.io/gh/imrafaelmerino/vertx-mongodb-effect/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/vertx-values)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_vertx-mongodb-effect&metric=alert_status)](https://sonarcloud.io/dashboard?id=imrafaelmerino_vertx-mongodb-effect)
