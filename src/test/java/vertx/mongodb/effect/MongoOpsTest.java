@@ -3,12 +3,10 @@ package vertx.mongodb.effect;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import io.vertx.core.CompositeFuture;
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import jsonvalues.*;
-import vertx.mongodb.effect.codecs.RegisterMongoValuesCodecs;
 import mongovalues.JsValuesRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,8 +14,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import vertx.effect.RegisterJsValuesCodecs;
-import vertx.effect.VertxRef;
 import vertx.effect.Val;
+import vertx.effect.VertxRef;
+import vertx.effect.exp.Quadruple;
+import vertx.mongodb.effect.codecs.RegisterMongoValuesCodecs;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -33,8 +33,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
 import static jsonvalues.JsNull.NULL;
-import static vertx.mongodb.effect.Converters.str2Oid;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static vertx.mongodb.effect.Converters.str2Oid;
 
 @ExtendWith(VertxExtension.class)
 public class MongoOpsTest {
@@ -70,6 +70,8 @@ public class MongoOpsTest {
                                VertxTestContext testContext
                               ) {
 
+        VertxRef vertxRef = new VertxRef(vertx);
+
         MongoVertxClient mongoClient = new MongoVertxClient(settings);
 
         dataModule = new DataCollectionModule(mongoClient.getCollection("test",
@@ -77,12 +79,13 @@ public class MongoOpsTest {
                                                                        )
         );
 
-        CompositeFuture.all(vertx.deployVerticle(mongoClient),
-                            vertx.deployVerticle(new RegisterMongoValuesCodecs()),
-                            vertx.deployVerticle(new RegisterJsValuesCodecs()),
-                            vertx.deployVerticle(dataModule)
-                           )
-                       .onComplete(TestFns.pipeTo(testContext));
+        Quadruple.sequential(vertxRef.deploy(new RegisterJsValuesCodecs()),
+                             vertxRef.deploy(mongoClient),
+                             vertxRef.deploy(new RegisterMongoValuesCodecs()),
+                             vertxRef.deploy(dataModule)
+                            )
+                 .onComplete(TestFns.pipeTo(testContext))
+                 .get();
 
         vertxRef = new VertxRef(vertx);
 
