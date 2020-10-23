@@ -1,5 +1,5 @@
 {
-    "app_name": "vertx-mongo-values",
+    "app_name": "vertx-mongodb-effect",
     "branch" : "v0.3",
     "repo_url": "",
     "version_name" : "v0.3",
