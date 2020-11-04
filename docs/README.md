@@ -1,3 +1,5 @@
+<img src="./logo/package_twitter_swe2n4mg/color1/full/coverphoto/color1_logo_light_background.png" alt="logo"/>
+
 [![Build Status](https://travis-ci.com/imrafaelmerino/vertx-mongodb-effect.svg?branch=master)](https://travis-ci.com/imrafaelmerino/vertx-mongodb-effect)
 [![codecov](https://codecov.io/gh/imrafaelmerino/vertx-mongodb-effect/branch/master/graph/badge.svg)](https://codecov.io/gh/imrafaelmerino/vertx-mongodb-effect)
 
