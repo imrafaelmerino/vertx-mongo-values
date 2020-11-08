@@ -54,37 +54,37 @@ Find below the BSON types supported and their equivalent type from json-values.
 
 ```java    
 
-    Map<BsonType, Class<?>> map = new HashMap<>();
-    map.put(BsonType.NULL, JsNull.class);
-    map.put(BsonType.ARRAY, JsArray.class);
-    map.put(BsonType.BINARY, JsBinary.class);
-    map.put(BsonType.BOOLEAN, JsBool.class);
-    map.put(BsonType.DATE_TIME, JsInstant.class);
-    map.put(BsonType.DOCUMENT, JsObj.class);
-    map.put(BsonType.DOUBLE, JsDouble.class);
-    map.put(BsonType.INT32, JsInt.class);
-    map.put(BsonType.INT64, JsLong.class);
-    map.put(BsonType.DECIMAL128, JsBigDec.class);
-    map.put(BsonType.STRING, JsStr.class);
+Map<BsonType, Class<?>> map = new HashMap<>();
+map.put(BsonType.NULL, JsNull.class);
+map.put(BsonType.ARRAY, JsArray.class);
+map.put(BsonType.BINARY, JsBinary.class);
+map.put(BsonType.BOOLEAN, JsBool.class);
+map.put(BsonType.DATE_TIME, JsInstant.class);
+map.put(BsonType.DOCUMENT, JsObj.class);
+map.put(BsonType.DOUBLE, JsDouble.class);
+map.put(BsonType.INT32, JsInt.class);
+map.put(BsonType.INT64, JsLong.class);
+map.put(BsonType.DECIMAL128, JsBigDec.class);
+map.put(BsonType.STRING, JsStr.class);
 
 ```
 
 
 ## <a name="operations"><a/> Supported operations 
 
-Every method of the mongodb driver has an associated lambda. Find below their type and constructors:
+Every method of the mongodb driver has an associated lambda. Find below their types and constructors:
 
-    - Count :: λ<JsObj, Long>
+**Count :: λ<JsObj, Long>**
 
-    ```java
+```java
 public Count(Supplier<MongoCollection<JsObj>> collectionSupplier,
              CountOptions options
             )
-    ```
+```
 
-    - DeleteMany :: λ<JsObj, O>
+**DeleteMany :: λ<JsObj, O>**
  
-     ```java
+```java
 public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<DeleteResult, O> resultConverter,
                   DeleteOptions options)
@@ -93,76 +93,146 @@ public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<DeleteResult, O> resultConverter,
                   DeleteOptions options,
                   ClientSession session)                           
-     ```   
+```   
     
-    - DeleteOne :: λ<JsObj, O>
+**DeleteOne :: λ<JsObj, O>**
     
-    ```java
-public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                  Function<DeleteResult, O> resultConverter,
-                  DeleteOptions options)
+```java
+public DeleteOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                 Function<DeleteResult, O> resultConverter,
+                 DeleteOptions options)
                       
-public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                  Function<DeleteResult, O> resultConverter,
-                  DeleteOptions options,
-                  ClientSession session)      
-    ```
-        
-    - Find
-    
-     ```java
-     
-     ```   
-    - FindAll
-    
-    ```java
-    
-    ```    
-    - FindOne
-    
-    ```java
-    
-    ```    
-    - FindOneAndDelete
-    
-     ```java
-     
-     ```   
-    - FindOneAndReplace
-    
-    ```java
-    
-    ```    
-    - FindOneAndUpdate
+public DeleteOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                 Function<DeleteResult, O> resultConverter,
+                 DeleteOptions options,
+                 ClientSession session)      
+```
 
-    ```java
-    
-    ```    
-    - InsertMany
+**FindAll :: λ<FindMessage, JsArray>**
 
-    ```java
     
-    ```    
-    - InsertOne
+```java
 
-    ```java
-    
-    ```    
-    - ReplaceOne
+public FindAll(Supplier<MongoCollection<JsObj>> collectionSupplier,
+               Function<FindIterable<JsObj>, JsArray> converter)
 
-    ```java
-    
-    ```    
-    - UpdateMany
+```    
 
-    ```java
+**FindOne :: λ<FindMessage, JsObj>**
     
-    ```    
-    - UpdateOne
+```java
 
-    ```java
+public FindOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
+               Function<FindIterable<JsObj>, JsObj> converter)    
+
+```    
+
+**FindOneAndDelete :: λ<JsObj, JsObj>**
     
-    ```    
+```java
+
+public FindOneAndDelete(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                        FindOneAndDeleteOptions options) 
+
+public FindOneAndDelete(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                        FindOneAndDeleteOptions options,
+                        ClientSession session)     
+
+```   
+
+**FindOneAndReplace :: λ<UpdateMessage, JsObj>**
+    
+```java
+public FindOneAndReplace(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                         FindOneAndReplaceOptions options)   
+
+public FindOneAndReplace(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                         FindOneAndReplaceOptions options,
+                         ClientSession session)  
+```    
+
+**FindOneAndUpdate :: λ<UpdateMessage, JsObj>**
+
+```java
+public FindOneAndUpdate(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                        FindOneAndUpdateOptions options)
+
+public FindOneAndUpdate(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                        FindOneAndUpdateOptions options,
+                        ClientSession session)     
+```    
+
+**InsertMany :: λ<JsArray, R>**
+
+```java
+
+public InsertMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                  Function<InsertManyResult, R> resultConverter,
+                  InsertManyOptions options
+                 )   
+
+public InsertMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                  Function<InsertManyResult, R> resultConverter,
+                  InsertManyOptions options,
+                  ClientSession session) 
+
+```    
+
+**InsertOne :: λ<JsObj, R>**
+
+```java
+
+public InsertOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                 Function<InsertOneResult, R> resultConverter,
+                 InsertOneOptions options
+                )    
+
+public InsertOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                 Function<InsertOneResult, R> resultConverter,
+                 InsertOneOptions options,
+                 ClientSession session) 
+
+```    
+
+**ReplaceOne :: λ<UpdateMessage, O>**
+
+```java
+public ReplaceOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                  Function<UpdateResult, O> resultConverter,
+                  ReplaceOptions options)   
+
+public ReplaceOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                  Function<UpdateResult, O> resultConverter,
+                  ReplaceOptions options,
+                  ClientSession session)  
+```    
+**UpdateMany :: λ<UpdateMessage, O>**
+
+```java
+public UpdateMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                  Function<UpdateResult, O> resultConverter,
+                  UpdateOptions options
+                 )
+
+public UpdateMany(UpdateOptions options,
+                  Supplier<MongoCollection<JsObj>> collectionSupplier,
+                  Function<UpdateResult, O> resultConverter,
+                  ClientSession session)     
+```    
+
+**UpdateOne :: λ<UpdateMessage, O>**
+
+```java
+public UpdateMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                  Function<UpdateResult, O> resultConverter,
+                  UpdateOptions options
+                 )
+
+public UpdateMany(UpdateOptions options,
+                  Supplier<MongoCollection<JsObj>> collectionSupplier,
+                  Function<UpdateResult, O> resultConverter,
+                  ClientSession session)     
+```    
 
 
 ## <a name="defmodules"><a/> Defining modules
