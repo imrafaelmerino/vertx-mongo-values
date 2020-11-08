@@ -17,7 +17,8 @@ import vertx.effect.RegisterJsValuesCodecs;
 import vertx.effect.Val;
 import vertx.effect.VertxRef;
 import vertx.effect.exp.Quadruple;
-import vertx.mongodb.effect.codecs.RegisterMongoValuesCodecs;
+import vertx.effect.λ;
+import vertx.mongodb.effect.codecs.RegisterMongoEffectCodecs;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -81,7 +82,7 @@ public class MongoOpsTest {
 
         Quadruple.sequential(vertxRef.deploy(new RegisterJsValuesCodecs()),
                              vertxRef.deploy(mongoClient),
-                             vertxRef.deploy(new RegisterMongoValuesCodecs()),
+                             vertxRef.deploy(new RegisterMongoEffectCodecs()),
                              vertxRef.deploy(dataModule)
                             )
                  .onComplete(TestFns.pipeTo(testContext))
@@ -822,9 +823,4 @@ public class MongoOpsTest {
                        );
     }
 
-    @Test
-    public void test_insert_duplicated() {
-
-
-    }
 }
