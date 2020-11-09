@@ -2,6 +2,8 @@ package vertx.mongodb.effect.functions;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.CountOptions;
+import io.vertx.core.MultiMap;
+import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import vertx.mongodb.effect.Failures;
 import jsonvalues.JsObj;
@@ -14,7 +16,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 
-public class Count implements λ<JsObj, Long> {
+public class Count implements λc<JsObj, Long> {
 
     private final CountOptions options;
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
@@ -33,7 +35,7 @@ public class Count implements λ<JsObj, Long> {
     }
 
     @Override
-    public Val<Long> apply(final JsObj query) {
+    public Val<Long> apply(final MultiMap context,final JsObj query) {
         if (query == null) return Cons.failure(new IllegalArgumentException("query is null"));
         try {
             var queryBson  = Converters.jsObj2Bson.apply(requireNonNull(query));

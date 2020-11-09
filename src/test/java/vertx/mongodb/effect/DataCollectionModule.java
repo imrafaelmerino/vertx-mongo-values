@@ -2,10 +2,10 @@ package vertx.mongodb.effect;
 
 import com.mongodb.client.MongoCollection;
 import io.vertx.core.DeploymentOptions;
-import vertx.mongodb.effect.functions.*;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
-import vertx.effect.λ;
+import vertx.effect.λc;
+import vertx.mongodb.effect.functions.*;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -21,20 +21,20 @@ public class DataCollectionModule extends MongoModule {
     private static final String INSERT_MANY_ADDRESS = "insert_all";
     private static final String DELETE_MANY_ADDRESS = "delete_all";
 
-    public λ<JsObj, String> insertOne;
-    public λ<JsObj, JsObj> deleteOne;
-    public λ<JsArray, JsArray> insertMany;
-    public λ<JsObj, JsObj> deleteMany;
-    public λ<FindMessage, Optional<JsObj>> findOne;
-    public λ<FindMessage, JsArray> findAll;
-    public λ<UpdateMessage, JsObj> findOneAndReplace;
-    public λ<UpdateMessage, JsObj> replaceOne;
-    public λ<UpdateMessage, JsObj> updateOne;
-    public λ<JsObj, Long> count;
-    public λ<UpdateMessage, JsObj> updateMany;
-    public λ<JsArray, JsArray> aggregate;
-    public λ<JsObj, JsObj> findOneAndDelete;
-    public λ<UpdateMessage, JsObj> findOneAndUpdate;
+    public λc<JsObj, String> insertOne;
+    public λc<JsObj, JsObj> deleteOne;
+    public λc<JsArray, JsArray> insertMany;
+    public λc<JsObj, JsObj> deleteMany;
+    public λc<FindMessage, Optional<JsObj>> findOne;
+    public λc<FindMessage, JsArray> findAll;
+    public λc<UpdateMessage, JsObj> findOneAndReplace;
+    public λc<UpdateMessage, JsObj> replaceOne;
+    public λc<UpdateMessage, JsObj> updateOne;
+    public λc<JsObj, Long> count;
+    public λc<UpdateMessage, JsObj> updateMany;
+    public λc<JsArray, JsArray> aggregate;
+    public λc<JsObj, JsObj> findOneAndDelete;
+    public λc<UpdateMessage, JsObj> findOneAndUpdate;
 
     public DataCollectionModule(final Supplier<MongoCollection<JsObj>> collection) {
         super(collection);
@@ -43,23 +43,24 @@ public class DataCollectionModule extends MongoModule {
 
     @Override
     protected void initialize() {
-        insertOne = this.ask(INSERT_ONE_ADDRESS);
-        insertMany = this.ask(INSERT_MANY_ADDRESS);
-        deleteMany = this.ask(DELETE_MANY_ADDRESS);
-        λ<FindMessage, JsObj> findOneLambda = vertxRef.spawn("findOne",
-                                                             new FindOne(collectionSupplier)
-                                                            );
-        findOne = m -> findOneLambda.apply(m)
-                                    .map(Optional::ofNullable);
+        insertOne = this.trace(INSERT_ONE_ADDRESS);
+        insertMany = this.trace(INSERT_MANY_ADDRESS);
+        deleteMany = this.trace(DELETE_MANY_ADDRESS);
+        λc<FindMessage, JsObj> findOneLambda = vertxRef.spawn("findOne",
+                                                              new FindOne(collectionSupplier)
+                                                             );
+        findOne = (context, message) -> findOneLambda.apply(context,
+                                                            message)
+                                                     .map(Optional::ofNullable);
         findAll = vertxRef.spawn("findAll",
                                  new FindAll(collectionSupplier)
                                 );
         count = vertxRef.spawn("count",
                                new Count(collectionSupplier)
                               );
-        deleteOne = this.ask(DELETE_ONE_ADDRESS);
-        replaceOne = this.ask(REPLACE_ONE_ADDRESS);
-        updateOne = this.ask(UPDATE_ONE_ADDRESS);
+        deleteOne = this.trace(DELETE_ONE_ADDRESS);
+        replaceOne = this.trace(REPLACE_ONE_ADDRESS);
+        updateOne = this.trace(UPDATE_ONE_ADDRESS);
         updateMany = vertxRef.spawn("updateMany",
                                     new UpdateMany<>(collectionSupplier,
                                                      updateResult2JsObj

@@ -3,13 +3,14 @@ package vertx.mongodb.effect.functions;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
+import io.vertx.core.MultiMap;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
+import vertx.effect.Val;
+import vertx.effect.exp.Cons;
+import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import vertx.mongodb.effect.Failures;
-import vertx.effect.exp.Cons;
-import vertx.effect.Val;
-import vertx.effect.λ;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -17,7 +18,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 
-public class Aggregate<O> implements λ<JsArray, O> {
+public class Aggregate<O> implements λc<JsArray, O> {
 
     public final Function<AggregateIterable<JsObj>, O> resultConverter;
     public final Supplier<MongoCollection<JsObj>> collectionSupplier;
@@ -30,7 +31,8 @@ public class Aggregate<O> implements λ<JsArray, O> {
     }
 
     @Override
-    public Val<O> apply(final JsArray m) {
+    public Val<O> apply(final MultiMap context,
+                        final JsArray m) {
         try {
             var pipeline   = Converters.jsArray2ListOfBson.apply(m);
             var collection = requireNonNull(this.collectionSupplier.get());

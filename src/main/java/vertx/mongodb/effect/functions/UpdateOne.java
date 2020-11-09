@@ -4,13 +4,14 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
+import io.vertx.core.MultiMap;
+import jsonvalues.JsObj;
+import vertx.effect.Val;
+import vertx.effect.exp.Cons;
+import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import vertx.mongodb.effect.Failures;
 import vertx.mongodb.effect.UpdateMessage;
-import jsonvalues.JsObj;
-import vertx.effect.exp.Cons;
-import vertx.effect.Val;
-import vertx.effect.λ;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -19,7 +20,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 
-public class UpdateOne<O> implements λ<UpdateMessage, O> {
+public class UpdateOne<O> implements λc<UpdateMessage, O> {
 
     public final Supplier<MongoCollection<JsObj>> collectionSupplier;
     public final Function<UpdateResult, O> resultConverter;
@@ -55,7 +56,8 @@ public class UpdateOne<O> implements λ<UpdateMessage, O> {
     }
 
     @Override
-    public Val<O> apply(final UpdateMessage message) {
+    public Val<O> apply(final MultiMap context,
+                        final UpdateMessage message) {
         if (message == null) return Cons.failure(new IllegalArgumentException("message is null"));
 
         try {

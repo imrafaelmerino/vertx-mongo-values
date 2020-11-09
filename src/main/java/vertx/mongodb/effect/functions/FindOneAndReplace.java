@@ -3,6 +3,8 @@ package vertx.mongodb.effect.functions;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
+import io.vertx.core.MultiMap;
+import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import vertx.mongodb.effect.Failures;
 import vertx.mongodb.effect.UpdateMessage;
@@ -16,7 +18,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 
-public class FindOneAndReplace implements λ<UpdateMessage, JsObj> {
+public class FindOneAndReplace implements λc<UpdateMessage, JsObj> {
 
     private final FindOneAndReplaceOptions options;
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
@@ -47,7 +49,7 @@ public class FindOneAndReplace implements λ<UpdateMessage, JsObj> {
 
 
     @Override
-    public Val<JsObj> apply(final UpdateMessage message) {
+    public Val<JsObj> apply(final MultiMap context,final UpdateMessage message) {
         if (message == null) return Cons.failure(new IllegalArgumentException("message is null"));
 
         try {

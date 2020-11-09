@@ -4,6 +4,8 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.result.UpdateResult;
+import io.vertx.core.MultiMap;
+import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import vertx.mongodb.effect.Failures;
 import vertx.mongodb.effect.UpdateMessage;
@@ -18,7 +20,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 
-public class ReplaceOne<O> implements λ<UpdateMessage, O> {
+public class ReplaceOne<O> implements λc<UpdateMessage, O> {
 
     private final Function<UpdateResult, O> resultConverter;
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
@@ -58,7 +60,7 @@ public class ReplaceOne<O> implements λ<UpdateMessage, O> {
 
 
     @Override
-    public Val<O> apply(final UpdateMessage message) {
+    public Val<O> apply(final MultiMap context,final UpdateMessage message) {
         if (message == null) return Cons.failure(new IllegalArgumentException("message is null"));
 
         try {
