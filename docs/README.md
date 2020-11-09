@@ -7,7 +7,7 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_vertx-mongodb-effect&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_vertx-mongodb-effect)
 
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/vertx-mongodb-effect.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/vertx-mongodb-effect)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/0.1)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/0.1/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/0.2)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/0.2/jar)
 [![](https://jitpack.io/v/imrafaelmerino/vertx-mongodb-effect.svg)](https://jitpack.io/#imrafaelmerino/vertx-mongodb-effect)
 
 - [Introduction](#introduction)
@@ -15,11 +15,10 @@
 - [Supported operations](#operations)
 - [Defining modules](#defmodules)
 - [Deploying modules](#depmodules)
+- [Publishing events](#events)
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [Related projects](#rp)
 - [Release process](#release)
-
 
 
 ## <a name="introduction"><a/> Introduction
@@ -29,7 +28,7 @@ It requires to be familiar with [vertx-effect](https://vertx.effect.imrafaelmeri
 **vertx-effect** and **vertx-mongo-effect** use the immutable and persistent Json from 
 [json-values](https://github.com/imrafaelmerino/json-values). 
 
-With **vertx-mongodb-effect** Jsons travel through all the system all the way down, without making any copy
+With **vertx-mongodb-effect** Jsons travel through all the system all the way down without making any copy
 nor conversion to BSON. 
   
 
@@ -50,7 +49,7 @@ MongoClientSettings  settings =
                                 .build();
 ``` 
 
-Find below the BSON types supported and their equivalent type from json-values.
+Find below the BSON types supported and their equivalent types from json-values.
 
 ```java    
 
@@ -72,7 +71,12 @@ map.put(BsonType.STRING, JsStr.class);
 
 ## <a name="operations"><a/> Supported operations 
 
-Every method of the mongodb driver has an associated lambda. Find below their types and constructors:
+Every method of the mongodb driver has an associated lambda. **Sessions and transactions can't be sent across
+the event bus, nevertheless [spawning](https://vertx.effect.imrafaelmerino.dev/#spawning-verticles) verticles opens the door to using them**. Since vertx-mongodb-effect uses 
+the driver API directly, it can benefit from all its features and methods. It's an advantage over
+the official vertx-mongodb-client.
+
+Find below the types and constructors of the most essentials operations:
 
 **Count :: λ<JsObj, Long>**
 
@@ -87,12 +91,14 @@ public Count(Supplier<MongoCollection<JsObj>> collectionSupplier,
 ```java
 public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<DeleteResult, O> resultConverter,
-                  DeleteOptions options)
+                  DeleteOptions options 
+                 )
                       
 public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<DeleteResult, O> resultConverter,
                   DeleteOptions options,
-                  ClientSession session)                           
+                  ClientSession session 
+                 )                           
 ```   
     
 **DeleteOne :: λ<JsObj, O>**
@@ -100,12 +106,14 @@ public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
 ```java
 public DeleteOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                  Function<DeleteResult, O> resultConverter,
-                 DeleteOptions options)
+                 DeleteOptions options 
+                )
                       
 public DeleteOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                  Function<DeleteResult, O> resultConverter,
                  DeleteOptions options,
-                 ClientSession session)      
+                 ClientSession session
+                )      
 ```
 
 **FindAll :: λ<FindMessage, JsArray>**
@@ -114,8 +122,8 @@ public DeleteOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
 ```java
 
 public FindAll(Supplier<MongoCollection<JsObj>> collectionSupplier,
-               Function<FindIterable<JsObj>, JsArray> converter)
-
+               Function<FindIterable<JsObj>, JsArray> converter 
+              )
 ```    
 
 **FindOne :: λ<FindMessage, JsObj>**
@@ -123,8 +131,8 @@ public FindAll(Supplier<MongoCollection<JsObj>> collectionSupplier,
 ```java
 
 public FindOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
-               Function<FindIterable<JsObj>, JsObj> converter)    
-
+               Function<FindIterable<JsObj>, JsObj> converter 
+              )                 
 ```    
 
 **FindOneAndDelete :: λ<JsObj, JsObj>**
@@ -132,34 +140,39 @@ public FindOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
 ```java
 
 public FindOneAndDelete(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                        FindOneAndDeleteOptions options) 
+                        FindOneAndDeleteOptions options
+                       ) 
 
 public FindOneAndDelete(Supplier<MongoCollection<JsObj>> collectionSupplier,
                         FindOneAndDeleteOptions options,
-                        ClientSession session)     
-
+                        ClientSession session 
+                       )     
 ```   
 
 **FindOneAndReplace :: λ<UpdateMessage, JsObj>**
     
 ```java
 public FindOneAndReplace(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                         FindOneAndReplaceOptions options)   
+                         FindOneAndReplaceOptions options
+                        )   
 
 public FindOneAndReplace(Supplier<MongoCollection<JsObj>> collectionSupplier,
                          FindOneAndReplaceOptions options,
-                         ClientSession session)  
+                         ClientSession session
+                        )  
 ```    
 
 **FindOneAndUpdate :: λ<UpdateMessage, JsObj>**
 
 ```java
 public FindOneAndUpdate(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                        FindOneAndUpdateOptions options)
+                        FindOneAndUpdateOptions options
+                       )
 
 public FindOneAndUpdate(Supplier<MongoCollection<JsObj>> collectionSupplier,
                         FindOneAndUpdateOptions options,
-                        ClientSession session)     
+                        ClientSession session
+                       )     
 ```    
 
 **InsertMany :: λ<JsArray, R>**
@@ -174,8 +187,8 @@ public InsertMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
 public InsertMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<InsertManyResult, R> resultConverter,
                   InsertManyOptions options,
-                  ClientSession session) 
-
+                  ClientSession session 
+                 ) 
 ```    
 
 **InsertOne :: λ<JsObj, R>**
@@ -190,8 +203,8 @@ public InsertOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
 public InsertOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                  Function<InsertOneResult, R> resultConverter,
                  InsertOneOptions options,
-                 ClientSession session) 
-
+                 ClientSession session
+                ) 
 ```    
 
 **ReplaceOne :: λ<UpdateMessage, O>**
@@ -199,12 +212,14 @@ public InsertOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
 ```java
 public ReplaceOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<UpdateResult, O> resultConverter,
-                  ReplaceOptions options)   
+                  ReplaceOptions options
+                 )   
 
 public ReplaceOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<UpdateResult, O> resultConverter,
                   ReplaceOptions options,
-                  ClientSession session)  
+                  ClientSession session
+                 )  
 ```    
 **UpdateMany :: λ<UpdateMessage, O>**
 
@@ -217,30 +232,31 @@ public UpdateMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
 public UpdateMany(UpdateOptions options,
                   Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<UpdateResult, O> resultConverter,
-                  ClientSession session)     
+                  ClientSession session
+                 )     
 ```    
 
 **UpdateOne :: λ<UpdateMessage, O>**
 
 ```java
-public UpdateMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                  Function<UpdateResult, O> resultConverter,
-                  UpdateOptions options
-                 )
+public UpdateOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
+                 Function<UpdateResult, O> resultConverter,
+                 UpdateOptions options
+                )
 
-public UpdateMany(UpdateOptions options,
-                  Supplier<MongoCollection<JsObj>> collectionSupplier,
-                  Function<UpdateResult, O> resultConverter,
-                  ClientSession session)     
+public UpdateOne(UpdateOptions options,
+                 Supplier<MongoCollection<JsObj>> collectionSupplier,
+                 Function<UpdateResult, O> resultConverter,
+                 ClientSession session
+                )     
 ```    
 
 
 ## <a name="defmodules"><a/> Defining modules
-
 As with vertx-effect, we use [modules](https://vertx.effect.imrafaelmerino.dev/#modules) to deploy 
 verticles and exposes lambdas to communicate with them. The typical scenario is to create a module per 
 collection. We can deploy or [spawn](https://vertx.effect.imrafaelmerino.dev/#spawning-verticles) verticles.
-
+The following module is just an example:
 
 ```java
 public class MyCollectionModule extends MongoModule {
@@ -276,7 +292,8 @@ public class MyCollectionModule extends MongoModule {
         this.deploy(INSERT_ONE_ADDRESS,
                     new InsertOne<>(collectionSupplier,
                                     Converters.insertOneResult2HexId
-                                   )
+                                   ),
+                    new DeploymentOptions().setInstances(4)
                    );
         this.deploy(INSERT_MANY_ADDRESS,
                     new InsertMany<>(collectionSupplier,
@@ -330,7 +347,7 @@ public class MyCollectionModule extends MongoModule {
         this.updateMany = vertxRef.spawn("update_many",
                                          new UpdateMany<>(collectionSupplier,
                                                           Converters.updateResult2JsObj
-                                                          )
+                                                         )
                                         );
         this.findOneAndReplace = vertxRef.spawn("find_and_replace",
                                                 new FindOneAndReplace(collectionSupplier)
@@ -404,42 +421,46 @@ Once everything is up and running, enjoy your lambdas!
 
 ```java
 
-Function<JsObj,JsObj> byCode = doc -> JsObj.of("code",doc.get("code"));
-
-λ<Optional<JsObj>, Optional<String>> setTimeStamp = opt -> 
-{
-    if (opt.isPresent()) 
-    {
-        JsObj doc = opt.get();
-        if (!doc.containsKey("code"))
-           return Cons.failure(new IllegalArgumentException("code is required"));
-        return dataModule.updateOne
-                         .apply(new UpdateMessage(byCode.apply(doc),
-                                                  doc.set("timestamp",
-                                                           JsInstant.of(Instant.now())
-                                                         )
-                                                  )
-                                )
-                         .map(result -> Optional.ofNullable(result.getStr("upsertedId")));
-    }
-    else return Cons.success(Optional.empty());
-};
-
-JsObj doc = ???;
-dataModule.findOne
-          .andThen(setTimeStamp)
-          .apply(FindMessage.ofFilter(byCode.apply(doc)));
-          
-
+BiFunction<Integer,String,Val<Optional<JsObj>>> findWithRetries = (attempts,code) ->
+          MyCollectionModule.findOne
+                            .apply(FindMessage.ofFilter(JsObj.of("code",
+                                                                 JsStr.of(code)
+                                                                )
+                                                        ) 
+                                   )                    
+                            .retryIf(e -> Failures.MONGO_TIMEOUT_PRISM.getOptional
+                                                                      .apply(e)
+                                                                      .isPresent(),
+                                     attempts
+                                     )
+                            .recoverWith(e -> Cons.success(Optional.empty()));
 ```
+## <a name="events"><a/> Publishing events
+Since it uses vertx-effect, the most important events are published into the address **vertx-effect-events**.
+You can disable this future with the Java system property **-Dpublish.events=false**. Go to 
+[vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events) for further details.
+
 
 ## <a name="requirements"><a/> Requirements 
+Java 11 or greater
 
+It uses:
+
+    - [vertx-effect](https://vertx.effect.imrafaelmerino.dev), version 0.6
+    - [mongo driver sync](https://mongodb.github.io/mongo-java-driver/4.1/whats-new/), version 4.1.1 
 
 ## <a name="installation"><a/> Installation 
+<dependency>
+   <groupId>com.github.imrafaelmerino</groupId>
+   <artifactId>vertx-mongodb-effect</artifactId>
+   <version>0.2</version>
+</dependency>
 
-## <a name="rp"><a/> Related projects 
+
 ## <a name="release"><a/> Release process 
-
+Every time a tagged commit is pushed into master, a Travis CI build will be triggered automatically and 
+start the release process, deploying to Maven repositories and GitHub Releases. See the Travis conf file 
+**.travis.yml** for further details. On the other hand, the master branch is read-only, and all the commits 
+should be pushed to master through pull requests. 
 
 
