@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>vertx-mongodb-effect</artifactId>
     <packaging>jar</packaging>
-    <version>0.1</version>
+    <version>0.2</version>
     <name>vertx.mongodb.effect</name>
     <description>It's a Java library to work with Mongo in Vertx following a functional and reactive style with
         vertx-values and mongo-values.
@@ -42,12 +42,11 @@
         <MAVEN-COMPILER-PLUGIN.SOURCE>11</MAVEN-COMPILER-PLUGIN.SOURCE>
         <MAVEN-COMPILER-PLUGIN.TARGET>11</MAVEN-COMPILER-PLUGIN.TARGET>
         <MONGO-VALUES-VERSION>0.5</MONGO-VALUES-VERSION>
-        <VERTX-EFFECT-VERSION>0.2</VERTX-EFFECT-VERSION>
+        <VERTX-EFFECT-VERSION>0.6</VERTX-EFFECT-VERSION>
         <VERTX-TEST-VERSION>4.0.0.Beta1</VERTX-TEST-VERSION>
-        <MONGO-REACTIVE-DRIVER>1.13.1</MONGO-REACTIVE-DRIVER>
         <JUNIT-JUPITER-ENGINE.VERSION>5.6.2</JUNIT-JUPITER-ENGINE.VERSION>
         <SLF4J-API.VERSION>1.7.30</SLF4J-API.VERSION>
-        <MONGODB-DRIVER-SYNC.VERSION>4.0.0-beta1</MONGODB-DRIVER-SYNC.VERSION>
+        <MONGODB-DRIVER-SYNC.VERSION>4.1.1</MONGODB-DRIVER-SYNC.VERSION>
         <MAVEN-JAR-PLUGIN.VERSION>3.2.0</MAVEN-JAR-PLUGIN.VERSION>
     </properties>
 

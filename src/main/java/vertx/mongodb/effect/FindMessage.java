@@ -22,10 +22,10 @@ public class FindMessage {
     public static final String SORT = "sort";
     public static final String PROJECTION = "projection";
     public static final String MAX_AWAIT_TIME = "maxAwaitTime";
-    public static final String OP_LOG_REPLAY = "oplogReplay";
     public static final String SHOW_RECORD_ID = "showRecordId";
     public static final String PARTIAL = "partial";
     public static final String RETURN_KEY = "returnKey";
+
 
     @SuppressWarnings({"squid:S107"})
         //it's private, needed to create a builder. End user will never has to deal with it
@@ -43,7 +43,6 @@ public class FindMessage {
                 final String comment,
                 final boolean noCursorTimeout,
                 final boolean partial,
-                final boolean oplogReplay,
                 final int batchSize,
                 final long maxAwaitTime,
                 final long maxTime) {
@@ -61,7 +60,6 @@ public class FindMessage {
         this.comment = comment;
         this.noCursorTimeout = noCursorTimeout;
         this.partial = partial;
-        this.oplogReplay = oplogReplay;
         this.batchSize = batchSize;
         this.maxAwaitTime = maxAwaitTime;
         this.maxTime = maxTime;
@@ -96,14 +94,11 @@ public class FindMessage {
 
     public final boolean partial;
 
-    public final boolean oplogReplay;
-
     public final int batchSize;
 
     public final long maxAwaitTime;
 
     public final long maxTime;
-
 
     public static FindMessage ofFilter(final JsObj filter) {
         return new FindMessageBuilder().filter(requireNonNull(filter))
@@ -128,7 +123,6 @@ public class FindMessage {
                 returnKey == that.returnKey &&
                 noCursorTimeout == that.noCursorTimeout &&
                 partial == that.partial &&
-                oplogReplay == that.oplogReplay &&
                 batchSize == that.batchSize &&
                 maxAwaitTime == that.maxAwaitTime &&
                 maxTime == that.maxTime &&
@@ -172,7 +166,6 @@ public class FindMessage {
                             comment,
                             noCursorTimeout,
                             partial,
-                            oplogReplay,
                             batchSize,
                             maxAwaitTime,
                             maxTime
@@ -220,9 +213,6 @@ public class FindMessage {
                              );
         options = options.set(NO_CURSOR_TIMEOUT,
                               JsBool.of(this.noCursorTimeout)
-                             );
-        options = options.set(OP_LOG_REPLAY,
-                              JsBool.of(this.oplogReplay)
                              );
         options = options.set(SHOW_RECORD_ID,
                               JsBool.of(this.showRecordId)

@@ -37,7 +37,6 @@ public class TestCodecs {
                                                 )
                                         .min(JsObj.empty())
                                         .noCursorTimeout(true)
-                                        .oplogReplay(true)
                                         .partial(true)
                                         .projection(JsObj.empty())
                                         .returnKey(true)

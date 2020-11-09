@@ -22,7 +22,6 @@ public class FindMessageBuilder {
     private String comment;
     private boolean noCursorTimeout;
     private boolean partial;
-    private boolean oplogReplay;
     private int batchSize = 100;
     private long maxAwaitTime = 0L;
     private long maxTime = 0L;
@@ -100,11 +99,6 @@ public class FindMessageBuilder {
         return this;
     }
 
-    public FindMessageBuilder oplogReplay(final boolean oplogReplay) {
-        this.oplogReplay = oplogReplay;
-        return this;
-    }
-
     public FindMessageBuilder batchSize(final int batchSize) {
         if(batchSize<0)throw new IllegalArgumentException("batchSize is < 0");
         this.batchSize = batchSize;
@@ -141,7 +135,6 @@ public class FindMessageBuilder {
                                comment,
                                noCursorTimeout,
                                partial,
-                               oplogReplay,
                                batchSize,
                                maxAwaitTime,
                                maxTime
