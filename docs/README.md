@@ -436,12 +436,10 @@ for further details.
 
 
 ## <a name="requirements"><a/> Requirements 
-Java 11 or greater
 
-It uses:
-
-    - [vertx-effect](https://vertx.effect.imrafaelmerino.dev), version 0.6
-    - [mongo driver sync](https://mongodb.github.io/mongo-java-driver/4.1/whats-new/), version 4.1.1 
+    - Java 11 or greater
+    - [vertx-effect](https://vertx.effect.imrafaelmerino.dev)
+    - [mongo driver sync](https://mongodb.github.io/mongo-java-driver/4.1/whats-new/)
 
 ## <a name="installation"><a/> Installation 
 <dependency>
