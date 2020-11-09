@@ -80,7 +80,7 @@ Since **vertx-mongodb-effect** uses the driver API directly, it can benefit from
 
 Please find below the types and constructors of the most essentials operations:
 
-**Count :: λ<JsObj, Long>**
+**Count :: λc<JsObj, Long>**
 
 ```java
 public Count(Supplier<MongoCollection<JsObj>> collectionSupplier,
@@ -88,7 +88,7 @@ public Count(Supplier<MongoCollection<JsObj>> collectionSupplier,
             )
 ```
 
-**DeleteMany :: λ<JsObj, O>**
+**DeleteMany :: λc<JsObj, O>**
  
 ```java
 public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
@@ -103,7 +103,7 @@ public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                  )                           
 ```   
     
-**DeleteOne :: λ<JsObj, O>**
+**DeleteOne :: λc<JsObj, O>**
     
 ```java
 public DeleteOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
@@ -118,7 +118,7 @@ public DeleteOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                 )      
 ```
 
-**FindAll :: λ<FindMessage, JsArray>**
+**FindAll :: λc<FindMessage, JsArray>**
 
     
 ```java
@@ -128,7 +128,7 @@ public FindAll(Supplier<MongoCollection<JsObj>> collectionSupplier,
               )
 ```    
 
-**FindOne :: λ<FindMessage, JsObj>**
+**FindOne :: λc<FindMessage, JsObj>**
     
 ```java
 
@@ -137,7 +137,7 @@ public FindOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
               )                 
 ```    
 
-**FindOneAndDelete :: λ<JsObj, JsObj>**
+**FindOneAndDelete :: λc<JsObj, JsObj>**
     
 ```java
 
@@ -151,7 +151,7 @@ public FindOneAndDelete(Supplier<MongoCollection<JsObj>> collectionSupplier,
                        )     
 ```   
 
-**FindOneAndReplace :: λ<UpdateMessage, JsObj>**
+**FindOneAndReplace :: λc<UpdateMessage, JsObj>**
     
 ```java
 public FindOneAndReplace(Supplier<MongoCollection<JsObj>> collectionSupplier,
@@ -164,7 +164,7 @@ public FindOneAndReplace(Supplier<MongoCollection<JsObj>> collectionSupplier,
                         )  
 ```    
 
-**FindOneAndUpdate :: λ<UpdateMessage, JsObj>**
+**FindOneAndUpdate :: λc<UpdateMessage, JsObj>**
 
 ```java
 public FindOneAndUpdate(Supplier<MongoCollection<JsObj>> collectionSupplier,
@@ -177,7 +177,7 @@ public FindOneAndUpdate(Supplier<MongoCollection<JsObj>> collectionSupplier,
                        )     
 ```    
 
-**InsertMany :: λ<JsArray, R>**
+**InsertMany :: λc<JsArray, R>**
 
 ```java
 
@@ -193,7 +193,7 @@ public InsertMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                  ) 
 ```    
 
-**InsertOne :: λ<JsObj, R>**
+**InsertOne :: λc<JsObj, R>**
 
 ```java
 
@@ -209,7 +209,7 @@ public InsertOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                 ) 
 ```    
 
-**ReplaceOne :: λ<UpdateMessage, O>**
+**ReplaceOne :: λc<UpdateMessage, O>**
 
 ```java
 public ReplaceOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
@@ -223,7 +223,7 @@ public ReplaceOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   ClientSession session
                  )  
 ```    
-**UpdateMany :: λ<UpdateMessage, O>**
+**UpdateMany :: λc<UpdateMessage, O>**
 
 ```java
 public UpdateMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
@@ -238,7 +238,7 @@ public UpdateMany(UpdateOptions options,
                  )     
 ```    
 
-**UpdateOne :: λ<UpdateMessage, O>**
+**UpdateOne :: λc<UpdateMessage, O>**
 
 ```java
 public UpdateOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
@@ -271,21 +271,21 @@ public class ReadModule extends MongoModule {
         super(collection);
     }
 
-    public static λ<FindMessage, Optional<JsObj>> findOne;
-    public static λ<FindMessage, JsArray> findAll;
-    public static λ<JsObj, Long> count;
-    public static λ<JsArray, JsArray> aggregate;
+    public static λc<FindMessage, Optional<JsObj>> findOne;
+    public static λc<FindMessage, JsArray> findAll;
+    public static λc<JsObj, Long> count;
+    public static λc<JsArray, JsArray> aggregate;
 
     @Override
     protected void deploy() {}  
 
     @Override
     protected void initialize() {
-        λ<FindMessage, JsObj> findOneLambda = vertxRef.spawn("find_one",
+        λc<FindMessage, JsObj> findOneLambda = vertxRef.spawn("find_one",
                                                              new FindOne(collection)
                                                             );
-        this.findOne = m -> findOneLambda.apply(m)
-                                         .map(Optional::ofNullable);
+        this.findOne = (context,message) -> findOneLambda.apply(context,message)
+                                                         .map(Optional::ofNullable);
         this.findAll = vertxRef.spawn("find_all",
                                       new FindAll(collection)
                                      );
@@ -313,10 +313,10 @@ public class MyCollectionModule extends MongoModule {
         super(collection);
     }
 
-    public static λ<JsObj, String> insertOne;
-    public static λ<JsObj, JsObj> deleteOne;
-    public static λ<UpdateMessage, JsObj> replaceOne;
-    public static λ<UpdateMessage, JsObj> updateOne;
+    public static λc<JsObj, String> insertOne;
+    public static λc<JsObj, JsObj> deleteOne;
+    public static λc<UpdateMessage, JsObj> replaceOne;
+    public static λc<UpdateMessage, JsObj> updateOne;
 
     @Override
     protected void deploy() {
@@ -345,10 +345,10 @@ public class MyCollectionModule extends MongoModule {
 
     @Override
     protected void initialize() {
-        this.insertOne = this.ask(INSERT_ONE_ADDRESS);
-        this.deleteOne = this.ask(DELETE_ONE_ADDRESS);
-        this.replaceOne = this.ask(REPLACE_ONE_ADDRESS);
-        this.updateOne = this.ask(UPDATE_ONE_ADDRESS);
+        this.insertOne = this.trace(INSERT_ONE_ADDRESS);
+        this.deleteOne = this.trace(DELETE_ONE_ADDRESS);
+        this.replaceOne = this.trace(REPLACE_ONE_ADDRESS);
+        this.updateOne = this.trace(UPDATE_ONE_ADDRESS);
     }
 
     private static final String DELETE_ONE_ADDRESS = "delete_one";   
