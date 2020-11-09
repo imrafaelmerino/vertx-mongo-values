@@ -37,9 +37,12 @@ nor conversion to BSON.
 json-values supports the standard Json types: string, number, null, object, array; There are five number specializations:
 int, long, double, decimal and biginteger. json-values adds support for instants and binary data. Instants 
 are serialized into its string representation according to ISO-8601; and the binary type is serialized into a 
-string encoded in base 64. [mongo-values] abstracts the processes of enconding and decoding all these types into and from BSON.
+string encoded in base 64. 
 
-When defining the mongo settings, you have to specify the codec registry _JsValuesRegistry_ from mongo-values:
+vertx-mongodb-effect uses [mongo-values](https://mongo.values.imrafaelmerino.dev/#events), that abstracts the processes 
+of enconding into BSON and decoding from BSON all the json-values types mentioned before.
+
+When defining the mongodb settings, you have to specify the codec registry _JsValuesRegistry_ from mongo-values:
 
 ```java
 MongoClientSettings  settings =
@@ -290,34 +293,34 @@ public class MyCollectionModule extends MongoModule {
     @Override
     protected void deploy() {
         this.deploy(INSERT_ONE_ADDRESS,
-                    new InsertOne<>(collectionSupplier,
+                    new InsertOne<>(collection,
                                     Converters.insertOneResult2HexId
                                    ),
                     new DeploymentOptions().setInstances(4)
                    );
         this.deploy(INSERT_MANY_ADDRESS,
-                    new InsertMany<>(collectionSupplier,
+                    new InsertMany<>(collection,
                                      Converters.insertManyResult2JsArrayOfHexIds
                                     )
                    );
         this.deploy(DELETE_MANY_ADDRESS,
-                    new DeleteMany<>(collectionSupplier,
+                    new DeleteMany<>(collection,
                                      Converters.deleteResult2JsObj
                                     )
                    );
         this.deploy(DELETE_ONE_ADDRESS,
-                    new DeleteOne<>(collectionSupplier,
+                    new DeleteOne<>(collection,
                                     Converters.deleteResult2JsObj
                                    )
                    );
 
         this.deploy(REPLACE_ONE_ADDRESS,
-                    new ReplaceOne<>(collectionSupplier,
+                    new ReplaceOne<>(collection,
                                      Converters.updateResult2JsObj
                                     )
                    );
         this.deploy(UPDATE_ONE_ADDRESS,
-                    new UpdateOne<>(collectionSupplier,
+                    new UpdateOne<>(collection,
                                     Converters.updateResult2JsObj
                                    )
                    );
@@ -333,33 +336,33 @@ public class MyCollectionModule extends MongoModule {
         this.updateOne = this.ask(UPDATE_ONE_ADDRESS);
         
         λ<FindMessage, JsObj> findOneLambda = vertxRef.spawn("find_one",
-                                                             new FindOne(collectionSupplier)
+                                                             new FindOne(collection)
                                                             );
         this.findOne = m -> findOneLambda.apply(m)
                                          .map(Optional::ofNullable);
         this.findAll = vertxRef.spawn("find_all",
-                                      new FindAll(collectionSupplier)
+                                      new FindAll(collection)
                                      );
         this.count = vertxRef.spawn("count",
-                                    new Count(collectionSupplier)
+                                    new Count(collection)
                                    );
 
         this.updateMany = vertxRef.spawn("update_many",
-                                         new UpdateMany<>(collectionSupplier,
+                                         new UpdateMany<>(collection,
                                                           Converters.updateResult2JsObj
                                                          )
                                         );
         this.findOneAndReplace = vertxRef.spawn("find_and_replace",
-                                                new FindOneAndReplace(collectionSupplier)
+                                                new FindOneAndReplace(collection)
                                                );
         this.findOneAndDelete = vertxRef.spawn("find_one_and_delete",
-                                               new FindOneAndDelete(collectionSupplier)
+                                               new FindOneAndDelete(collection)
                                               );
         this.findOneAndUpdate = vertxRef.spawn("find_one_and_update",
-                                               new FindOneAndUpdate(collectionSupplier)
+                                               new FindOneAndUpdate(collection)
                                               );
         this.aggregate = vertxRef.spawn("aggregate",
-                                        new Aggregate<>(collectionSupplier,
+                                        new Aggregate<>(collection,
                                                         Converters.aggregateResult2JsArray
                                                        )
                                        );
