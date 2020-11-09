@@ -6,10 +6,9 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>vertx-mongodb-effect</artifactId>
     <packaging>jar</packaging>
-    <version>0.2</version>
+    <version>0.3</version>
     <name>vertx.mongodb.effect</name>
-    <description>It's a Java library to work with Mongo in Vertx following a functional and reactive style with
-        vertx-values and mongo-values.
+    <description>Actors meet Functional Programming.
     </description>
     <url>https://github.com/imrafaelmerino/vertx-mongodb-effect</url>
     <licenses>
