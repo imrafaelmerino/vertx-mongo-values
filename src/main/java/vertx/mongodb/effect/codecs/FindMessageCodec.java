@@ -41,7 +41,6 @@ public class FindMessageCodec implements MessageCodec<FindMessage, FindMessage> 
         var options = JsObj.parse(new String(bytes));
 
         var noCursorTimeout = options.getBool(NO_CURSOR_TIMEOUT);
-        var oplogReplay     = options.getBool(OP_LOG_REPLAY);
         var partial         = options.getBool(PARTIAL);
         var returnKey       = options.getBool(RETURN_KEY);
         var showRecordId    = options.getBool(SHOW_RECORD_ID);
@@ -56,7 +55,6 @@ public class FindMessageCodec implements MessageCodec<FindMessage, FindMessage> 
                                               .max(options.getObj(MAX))
                                               .min(options.getObj(MIN))
                                               .noCursorTimeout(Boolean.TRUE.equals(noCursorTimeout))
-                                              .oplogReplay(Boolean.TRUE.equals(oplogReplay))
                                               .partial(Boolean.TRUE.equals(partial))
                                               .projection(options.getObj(PROJECTION))
                                               .returnKey(Boolean.TRUE.equals(returnKey))

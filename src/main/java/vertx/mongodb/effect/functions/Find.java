@@ -59,7 +59,6 @@ class Find<O> implements λ<FindMessage, O> {
                                                                                 )
                                                                    .partial(message.partial)
                                                                    .showRecordId(message.showRecordId)
-                                                                   .oplogReplay(message.oplogReplay)
                                                                    .noCursorTimeout(message.noCursorTimeout)
 
                                                ));
