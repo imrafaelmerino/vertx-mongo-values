@@ -5,7 +5,9 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.InsertOneOptions;
 import com.mongodb.client.result.InsertOneResult;
+import io.vertx.core.MultiMap;
 import jsonvalues.JsObj;
+import vertx.effect.λc;
 import vertx.mongodb.effect.Failures;
 import vertx.effect.exp.Cons;
 import vertx.effect.Val;
@@ -16,7 +18,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class InsertOne<R> implements λ<JsObj, R> {
+public class InsertOne<R> implements λc<JsObj, R> {
 
 
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
@@ -56,7 +58,7 @@ public class InsertOne<R> implements λ<JsObj, R> {
 
 
     @Override
-    public Val<R> apply(final JsObj message) {
+    public Val<R> apply(final MultiMap context,final JsObj message) {
         if (message == null) return Cons.failure(new IllegalArgumentException("message is null"));
 
         try {

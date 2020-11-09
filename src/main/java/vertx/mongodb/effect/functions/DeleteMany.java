@@ -4,6 +4,8 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.DeleteOptions;
 import com.mongodb.client.result.DeleteResult;
+import io.vertx.core.MultiMap;
+import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import jsonvalues.JsObj;
 import vertx.effect.exp.Cons;
@@ -16,7 +18,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 
-public class DeleteMany<O> implements λ<JsObj, O> {
+public class DeleteMany<O> implements λc<JsObj, O> {
 
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
     private final Function<DeleteResult, O> resultConverter;
@@ -54,7 +56,7 @@ public class DeleteMany<O> implements λ<JsObj, O> {
     }
 
     @Override
-    public Val<O> apply(final JsObj query) {
+    public Val<O> apply(final MultiMap context,final JsObj query) {
         if (query == null) return Cons.failure(new IllegalArgumentException("query is null"));
         try {
             var collection = requireNonNull(this.collectionSupplier.get());

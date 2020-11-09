@@ -3,6 +3,8 @@ package vertx.mongodb.effect.functions;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.FindOneAndDeleteOptions;
+import io.vertx.core.MultiMap;
+import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import vertx.mongodb.effect.Failures;
 import jsonvalues.JsObj;
@@ -15,7 +17,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 
-public class FindOneAndDelete implements λ<JsObj, JsObj> {
+public class FindOneAndDelete implements λc<JsObj, JsObj> {
 
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
     private final FindOneAndDeleteOptions options;
@@ -45,7 +47,7 @@ public class FindOneAndDelete implements λ<JsObj, JsObj> {
     }
 
     @Override
-    public Val<JsObj> apply(final JsObj query) {
+    public Val<JsObj> apply(final MultiMap context,final JsObj query) {
         if (query == null) return Cons.failure(new IllegalArgumentException("query is null"));
 
         try {

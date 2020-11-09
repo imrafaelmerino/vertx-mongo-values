@@ -5,6 +5,8 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.InsertManyOptions;
 import com.mongodb.client.result.InsertManyResult;
+import io.vertx.core.MultiMap;
+import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import vertx.mongodb.effect.Failures;
 import jsonvalues.JsArray;
@@ -18,7 +20,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class InsertMany<R> implements λ<JsArray, R> {
+public class InsertMany<R> implements λc<JsArray, R> {
 
 
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
@@ -55,7 +57,7 @@ public class InsertMany<R> implements λ<JsArray, R> {
 
 
     @Override
-    public Val<R> apply(final JsArray message) {
+    public Val<R> apply(final MultiMap context,final JsArray message) {
         if (message == null) return Cons.failure(new IllegalArgumentException("message is null"));
 
         try {
