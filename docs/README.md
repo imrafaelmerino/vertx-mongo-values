@@ -26,33 +26,23 @@
 **vertx-mongodb-effect** allows us to work with **MongoDB** following a purely functional and reactive style.
 It requires to be familiar with [vertx-effect](https://vertx.effect.imrafaelmerino.dev/#modules). Both
 **vertx-effect** and **vertx-mongo-effect** use the immutable and persistent Json from 
-[json-values](https://github.com/imrafaelmerino/json-values). 
+[json-values](https://github.com/imrafaelmerino/json-values). **Jsons travel across the event bus, 
+from verticle to verticle, back and forth, without being neither copied nor converted to BSON**.
+ 
 
-With **vertx-mongodb-effect** Jsons travel through all the system all the way down without making any copy
+With **vertx-mongodb-effect** Jsons travel through the system all the way down without making any copy
 nor conversion to BSON. 
   
 
 ## <a name="types"><a/> Supported types
+**json-values** supports the standard Json types: string, number, null, object, array; 
+There are five number specializations: int, long, double, decimal, and BigInteger. 
+**json-values adds support for instants and binary data**. It serializes Instants into 
+its string representation according to ISO-8601, and the binary type into a string encoded in base 64. 
 
-json-values supports the standard Json types: string, number, null, object, array; There are five number specializations:
-int, long, double, decimal and biginteger. json-values adds support for instants and binary data. Instants 
-are serialized into its string representation according to ISO-8601; and the binary type is serialized into a 
-string encoded in base 64. 
-
-vertx-mongodb-effect uses [mongo-values](https://mongo.values.imrafaelmerino.dev/#events), that abstracts the processes 
-of enconding into BSON and decoding from BSON all the json-values types mentioned before.
-
-When defining the mongodb settings, you have to specify the codec registry _JsValuesRegistry_ from mongo-values:
-
-```java
-MongoClientSettings  settings =
-             MongoClientSettings.builder()
-                                .applyConnectionString(connString)
-                                .codecRegistry(JsValuesRegistry.INSTANCE)
-                                .build();
-``` 
-
-Find below the BSON types supported and their equivalent types from json-values.
+**vertx-mongodb-effect** uses [mongo-values](https://mongo.values.imrafaelmerino.dev). 
+It abstracts the processes of encoding to BSON and decoding from BSON. 	
+Please find below the BSON types supported and their equivalent types in json-values.
 
 ```java    
 
@@ -71,15 +61,24 @@ map.put(BsonType.STRING, JsStr.class);
 
 ```
 
+When defining the mongodb settings, **you have to specify the codec registry _JsValuesRegistry_ from mongo-values**:
+
+```java
+MongoClientSettings  settings =
+             MongoClientSettings.builder()
+                                .applyConnectionString(connString)
+                                .codecRegistry(JsValuesRegistry.INSTANCE)
+                                .build();
+``` 
 
 ## <a name="operations"><a/> Supported operations 
+**Every method of the MongoDB driver has an associated lambda**. Verticles can't send [sessions](https://docs.mongodb.com/manual/reference/method/Session/) 
+and [transactions](https://docs.mongodb.com/manual/core/transactions/) across the event bus; nevertheless, [spawning](https://vertx.effect.imrafaelmerino.dev/#spawning-verticles) verticles opens the door to using them. 
 
-Every method of the mongodb driver has an associated lambda. **Sessions and transactions can't be sent across
-the event bus, nevertheless [spawning](https://vertx.effect.imrafaelmerino.dev/#spawning-verticles) verticles opens the door to using them**. Since vertx-mongodb-effect uses 
-the driver API directly, it can benefit from all its features and methods. It's an advantage over
-the official vertx-mongodb-client.
+Since **vertx-mongodb-effect** uses the driver API directly, it can benefit from all its features and methods. 
+**It's an advantage over the official vertx-mongodb-client**.
 
-Find below the types and constructors of the most essentials operations:
+Please find below the types and constructors of the most essentials operations:
 
 **Count :: λ<JsObj, Long>**
 
@@ -256,10 +255,56 @@ public UpdateOne(UpdateOptions options,
 
 
 ## <a name="defmodules"><a/> Defining modules
-As with vertx-effect, we use [modules](https://vertx.effect.imrafaelmerino.dev/#modules) to deploy 
-verticles and exposes lambdas to communicate with them. The typical scenario is to create a module per 
-collection. We can deploy or [spawn](https://vertx.effect.imrafaelmerino.dev/#spawning-verticles) verticles.
-The following module is just an example:
+Like with vertx-effect, we use [modules](https://vertx.effect.imrafaelmerino.dev/#modules) to deploy 
+verticles and expose lambdas to communicate with them.
+The typical scenario is to create a module per collection. We can deploy or spawn verticles. 
+
+The following modules are just a couple of examples.
+
+
+We create a module where all the lambdas make read operations and spawn verticles to reach a significant level of parallelization:
+
+```java
+public class ReadModule extends MongoModule {
+
+    public MyCollectionModule(final Supplier<MongoCollection<JsObj>> collection) {
+        super(collection);
+    }
+
+    public static λ<FindMessage, Optional<JsObj>> findOne;
+    public static λ<FindMessage, JsArray> findAll;
+    public static λ<JsObj, Long> count;
+    public static λ<JsArray, JsArray> aggregate;
+
+    @Override
+    protected void deploy() {}  
+
+    @Override
+    protected void initialize() {
+        λ<FindMessage, JsObj> findOneLambda = vertxRef.spawn("find_one",
+                                                             new FindOne(collection)
+                                                            );
+        this.findOne = m -> findOneLambda.apply(m)
+                                         .map(Optional::ofNullable);
+        this.findAll = vertxRef.spawn("find_all",
+                                      new FindAll(collection)
+                                     );
+        this.count = vertxRef.spawn("count",
+                                    new Count(collection)
+                                   );
+
+        this.aggregate = vertxRef.spawn("aggregate",
+                                        new Aggregate<>(collection,
+                                                        Converters.aggregateResult2JsArray
+                                                       )
+                                       );
+    }
+}
+```
+
+We create a module where all the lambdas make delete, insert and update operations, and deploy only one
+instance per verticle. 
+
 
 ```java
 public class MyCollectionModule extends MongoModule {
@@ -270,25 +315,8 @@ public class MyCollectionModule extends MongoModule {
 
     public static λ<JsObj, String> insertOne;
     public static λ<JsObj, JsObj> deleteOne;
-    public static λ<JsArray, JsArray> insertMany;
-    public static λ<JsObj, JsObj> deleteMany;
-    public static λ<FindMessage, Optional<JsObj>> findOne;
-    public static λ<FindMessage, JsArray> findAll;
-    public static λ<UpdateMessage, JsObj> findOneAndReplace;
     public static λ<UpdateMessage, JsObj> replaceOne;
     public static λ<UpdateMessage, JsObj> updateOne;
-    public static λ<JsObj, Long> count;
-    public static λ<UpdateMessage, JsObj> updateMany;
-    public static λ<JsArray, JsArray> aggregate;
-    public static λ<JsObj, JsObj> findOneAndDelete;
-    public static λ<UpdateMessage, JsObj> findOneAndUpdate;
-
-    private static final String DELETE_ONE_ADDRESS = "delete_one";   
-    private static final String UPDATE_ONE_ADDRESS = "update_one";
-    private static final String REPLACE_ONE_ADDRESS = "replace_one";
-    private static final String INSERT_ONE_ADDRESS = "insert_one";
-    private static final String INSERT_MANY_ADDRESS = "insert_all";
-    private static final String DELETE_MANY_ADDRESS = "delete_all";
 
     @Override
     protected void deploy() {
@@ -296,17 +324,6 @@ public class MyCollectionModule extends MongoModule {
                     new InsertOne<>(collection,
                                     Converters.insertOneResult2HexId
                                    ),
-                    new DeploymentOptions().setInstances(4)
-                   );
-        this.deploy(INSERT_MANY_ADDRESS,
-                    new InsertMany<>(collection,
-                                     Converters.insertManyResult2JsArrayOfHexIds
-                                    )
-                   );
-        this.deploy(DELETE_MANY_ADDRESS,
-                    new DeleteMany<>(collection,
-                                     Converters.deleteResult2JsObj
-                                    )
                    );
         this.deploy(DELETE_ONE_ADDRESS,
                     new DeleteOne<>(collection,
@@ -329,53 +346,25 @@ public class MyCollectionModule extends MongoModule {
     @Override
     protected void initialize() {
         this.insertOne = this.ask(INSERT_ONE_ADDRESS);
-        this.insertMany = this.ask(INSERT_MANY_ADDRESS);
-        this.deleteMany = this.ask(DELETE_MANY_ADDRESS);
         this.deleteOne = this.ask(DELETE_ONE_ADDRESS);
         this.replaceOne = this.ask(REPLACE_ONE_ADDRESS);
         this.updateOne = this.ask(UPDATE_ONE_ADDRESS);
-        
-        λ<FindMessage, JsObj> findOneLambda = vertxRef.spawn("find_one",
-                                                             new FindOne(collection)
-                                                            );
-        this.findOne = m -> findOneLambda.apply(m)
-                                         .map(Optional::ofNullable);
-        this.findAll = vertxRef.spawn("find_all",
-                                      new FindAll(collection)
-                                     );
-        this.count = vertxRef.spawn("count",
-                                    new Count(collection)
-                                   );
-
-        this.updateMany = vertxRef.spawn("update_many",
-                                         new UpdateMany<>(collection,
-                                                          Converters.updateResult2JsObj
-                                                         )
-                                        );
-        this.findOneAndReplace = vertxRef.spawn("find_and_replace",
-                                                new FindOneAndReplace(collection)
-                                               );
-        this.findOneAndDelete = vertxRef.spawn("find_one_and_delete",
-                                               new FindOneAndDelete(collection)
-                                              );
-        this.findOneAndUpdate = vertxRef.spawn("find_one_and_update",
-                                               new FindOneAndUpdate(collection)
-                                              );
-        this.aggregate = vertxRef.spawn("aggregate",
-                                        new Aggregate<>(collection,
-                                                        Converters.aggregateResult2JsArray
-                                                       )
-                                       );
     }
-}
 
+    private static final String DELETE_ONE_ADDRESS = "delete_one";   
+    private static final String UPDATE_ONE_ADDRESS = "update_one";
+    private static final String REPLACE_ONE_ADDRESS = "replace_one";
+    private static final String INSERT_ONE_ADDRESS = "insert_one";
+    private static final String INSERT_MANY_ADDRESS = "insert_all";
+    private static final String DELETE_MANY_ADDRESS = "delete_all";
+
+}
 
 ``` 
 ## <a name="depmodules"><a/> Deploying modules 
 
-You need to register the Vertx message codecs from json-values and from this library to send all the required
-types across the event bus. This is done by deploying the verticles _RegisterMongoEffectCodecs_ and
-_RegisterJsValuesCodecs_. 
+The verticles RegisterMongoEffectCodecs and RegisterJsValuesCodecs need to be deployed to register the vertx message codecs.
+
 
 
 ```java
@@ -439,9 +428,11 @@ BiFunction<Integer,String,Val<Optional<JsObj>>> findWithRetries = (attempts,code
                             .recoverWith(e -> Cons.success(Optional.empty()));
 ```
 ## <a name="events"><a/> Publishing events
-Since it uses vertx-effect, the most important events are published into the address **vertx-effect-events**.
-You can disable this future with the Java system property **-Dpublish.events=false**. Go to 
-[vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events) for further details.
+
+Since **vertx-effect** publishes the most critical events into the address **vertx-effect-events**, 
+it' possible to register consumers to explode that information. You can disable this feature 
+with the Java system property **-Dpublish.events=false**. Go to the vertx-effect [documentation]([vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events)) 
+for further details.
 
 
 ## <a name="requirements"><a/> Requirements 
