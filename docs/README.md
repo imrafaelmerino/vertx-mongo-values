@@ -29,11 +29,6 @@ It requires to be familiar with [vertx-effect](https://vertx.effect.imrafaelmeri
 [json-values](https://github.com/imrafaelmerino/json-values). **Jsons travel across the event bus, 
 from verticle to verticle, back and forth, without being neither copied nor converted to BSON**.
  
-
-With **vertx-mongodb-effect** Jsons travel through the system all the way down without making any copy
-nor conversion to BSON. 
-  
-
 ## <a name="types"><a/> Supported types
 **json-values** supports the standard Json types: string, number, null, object, array; 
 There are five number specializations: int, long, double, decimal, and BigInteger. 
@@ -64,6 +59,10 @@ map.put(BsonType.STRING, JsStr.class);
 When defining the mongodb settings, **you have to specify the codec registry _JsValuesRegistry_ from mongo-values**:
 
 ```java
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import mongovalues.JsValuesRegistry;
+
 MongoClientSettings  settings =
              MongoClientSettings.builder()
                                 .applyConnectionString(connString)
@@ -83,6 +82,9 @@ Please find below the types and constructors of the most essentials operations:
 **Count :: λc<JsObj, Long>**
 
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.CountOptions;
+
 public Count(Supplier<MongoCollection<JsObj>> collectionSupplier,
              CountOptions options
             )
@@ -91,6 +93,11 @@ public Count(Supplier<MongoCollection<JsObj>> collectionSupplier,
 **DeleteMany :: λc<JsObj, O>**
  
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.DeleteOptions;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.ClientSession;
+
 public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<DeleteResult, O> resultConverter,
                   DeleteOptions options 
@@ -106,6 +113,11 @@ public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
 **DeleteOne :: λc<JsObj, O>**
     
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.DeleteOptions;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.ClientSession;
+
 public DeleteOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                  Function<DeleteResult, O> resultConverter,
                  DeleteOptions options 
@@ -122,6 +134,8 @@ public DeleteOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
 
     
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.FindIterable;
 
 public FindAll(Supplier<MongoCollection<JsObj>> collectionSupplier,
                Function<FindIterable<JsObj>, JsArray> converter 
@@ -131,6 +145,8 @@ public FindAll(Supplier<MongoCollection<JsObj>> collectionSupplier,
 **FindOne :: λc<FindMessage, JsObj>**
     
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.FindIterable;
 
 public FindOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                Function<FindIterable<JsObj>, JsObj> converter 
@@ -140,6 +156,9 @@ public FindOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
 **FindOneAndDelete :: λc<JsObj, JsObj>**
     
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.FindOneAndDeleteOptions;
+import com.mongodb.client.ClientSession;
 
 public FindOneAndDelete(Supplier<MongoCollection<JsObj>> collectionSupplier,
                         FindOneAndDeleteOptions options
@@ -154,6 +173,10 @@ public FindOneAndDelete(Supplier<MongoCollection<JsObj>> collectionSupplier,
 **FindOneAndReplace :: λc<UpdateMessage, JsObj>**
     
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
+import com.mongodb.client.ClientSession;
+
 public FindOneAndReplace(Supplier<MongoCollection<JsObj>> collectionSupplier,
                          FindOneAndReplaceOptions options
                         )   
@@ -167,6 +190,10 @@ public FindOneAndReplace(Supplier<MongoCollection<JsObj>> collectionSupplier,
 **FindOneAndUpdate :: λc<UpdateMessage, JsObj>**
 
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.ClientSession;
+
 public FindOneAndUpdate(Supplier<MongoCollection<JsObj>> collectionSupplier,
                         FindOneAndUpdateOptions options
                        )
@@ -180,6 +207,10 @@ public FindOneAndUpdate(Supplier<MongoCollection<JsObj>> collectionSupplier,
 **InsertMany :: λc<JsArray, R>**
 
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.result.InsertManyResult;
+import com.mongodb.client.model.InsertManyOptions;
+import com.mongodb.client.ClientSession;
 
 public InsertMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<InsertManyResult, R> resultConverter,
@@ -196,6 +227,10 @@ public InsertMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
 **InsertOne :: λc<JsObj, R>**
 
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.model.InsertOneOptions;
+import com.mongodb.client.ClientSession;
 
 public InsertOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                  Function<InsertOneResult, R> resultConverter,
@@ -212,6 +247,11 @@ public InsertOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
 **ReplaceOne :: λc<UpdateMessage, O>**
 
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.result.UpdateResult;
+import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.ClientSession;
+
 public ReplaceOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<UpdateResult, O> resultConverter,
                   ReplaceOptions options
@@ -226,6 +266,11 @@ public ReplaceOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
 **UpdateMany :: λc<UpdateMessage, O>**
 
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.result.UpdateResult;
+import com.mongodb.client.model.UpdateOptions
+import com.mongodb.client.ClientSession;
+
 public UpdateMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<UpdateResult, O> resultConverter,
                   UpdateOptions options
@@ -241,6 +286,11 @@ public UpdateMany(UpdateOptions options,
 **UpdateOne :: λc<UpdateMessage, O>**
 
 ```java
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.result.UpdateResult;
+import com.mongodb.client.model.UpdateOptions
+import com.mongodb.client.ClientSession;
+
 public UpdateOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                  Function<UpdateResult, O> resultConverter,
                  UpdateOptions options
@@ -255,7 +305,7 @@ public UpdateOne(UpdateOptions options,
 
 
 ## <a name="defmodules"><a/> Defining modules
-Like with vertx-effect, we use [modules](https://vertx.effect.imrafaelmerino.dev/#modules) to deploy 
+Like with vertx-effect, [modules](https://vertx.effect.imrafaelmerino.dev/#modules) to deploy 
 verticles and expose lambdas to communicate with them.
 The typical scenario is to create a module per collection. We can deploy or spawn verticles. 
 
@@ -265,6 +315,9 @@ The following modules are just a couple of examples.
 We create a module where all the lambdas make read operations and spawn verticles to reach a significant level of parallelization:
 
 ```java
+import vertx.mongodb.effect.MongoModule;
+import vertx.effect.λc;
+
 public class ReadModule extends MongoModule {
 
     public MyCollectionModule(final Supplier<MongoCollection<JsObj>> collection) {
@@ -307,6 +360,9 @@ instance per verticle.
 
 
 ```java
+import vertx.mongodb.effect.MongoModule;
+import vertx.effect.λc;
+
 public class MyCollectionModule extends MongoModule {
 
     public MyCollectionModule(final Supplier<MongoCollection<JsObj>> collection) {
@@ -363,14 +419,20 @@ public class MyCollectionModule extends MongoModule {
 ``` 
 ## <a name="depmodules"><a/> Deploying modules 
 
-The verticles RegisterMongoEffectCodecs and RegisterJsValuesCodecs need to be deployed to register the vertx message codecs.
-
+The verticles _RegisterMongoEffectCodecs_ and _RegisterJsValuesCodecs_ need to be deployed to register the vertx message codecs.
+Remember that you can't send any message to the event bus. If a message is not supported by Vertx you have to
+create a _MessageCodec_.
 
 
 ```java
-int connectTimeoutMS = 2000;
-int socketTimeoutMS = 5000;
-int serverSelectionTimeoutMS = 3000;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import vertx.effect.VertxRef;
+
+// define every timeout if you wanna be reactive
+int connectTimeoutMS =  ???;
+int socketTimeoutMS = ???;
+int serverSelectionTimeoutMS = ???;
 
 String connectionUrl = 
      String.format("mongodb://localhost:27017/?connectTimeoutMS=%s&socketTimeoutMS=%s&serverSelectionTimeoutMS=%s",
@@ -390,8 +452,8 @@ MongoClientSettings  settings =
 // one vertx client per database connection 
 MongoVertxClient mongoClient = new MongoVertxClient(settings);
 
-String database = "DB";
-String collection = "Collection"
+String database = ???;
+String collection = ???; 
 MyCollectionModule collectionModule = 
           new MyCollectionModule(mongoClient.getCollection(database,
                                                            collection
@@ -413,7 +475,7 @@ Once everything is up and running, enjoy your lambdas!
 
 ```java
 
-BiFunction<Integer,String,Val<Optional<JsObj>>> findWithRetries = (attempts,code) ->
+BiFunction<Integer,String,Val<Optional<JsObj>>> findByCode = (attempts,code) ->
           MyCollectionModule.findOne
                             .apply(FindMessage.ofFilter(JsObj.of("code",
                                                                  JsStr.of(code)
@@ -431,17 +493,20 @@ BiFunction<Integer,String,Val<Optional<JsObj>>> findWithRetries = (attempts,code
 
 Since **vertx-effect** publishes the most critical events into the address **vertx-effect-events**, 
 it' possible to register consumers to explode that information. You can disable this feature 
-with the Java system property **-Dpublish.events=false**. Go to the vertx-effect [documentation]([vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events)) 
+with the Java system property **-Dpublish.events=false**. Thanks to λc, it's possible to correlate
+different events that belongs to the same transaction.
+Go to the vertx-effect [documentation]([vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events)) 
 for further details.
 
 
 ## <a name="requirements"><a/> Requirements 
 
-    - Java 11 or greater
-    - [vertx-effect](https://vertx.effect.imrafaelmerino.dev)
-    - [mongo driver sync](https://mongodb.github.io/mongo-java-driver/4.1/whats-new/)
+   -  Java 11 or greater
+   -  [vertx-effect](https://vertx.effect.imrafaelmerino.dev)
+   -  [mongo driver sync](https://mongodb.github.io/mongo-java-driver/4.1/whats-new/)
 
 ## <a name="installation"><a/> Installation 
+
 <dependency>
    <groupId>com.github.imrafaelmerino</groupId>
    <artifactId>vertx-mongodb-effect</artifactId>
