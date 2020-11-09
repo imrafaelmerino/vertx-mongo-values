@@ -61,6 +61,7 @@ class Find<O> implements λ<FindMessage, O> {
                                                                    .showRecordId(message.showRecordId)
                                                                    .oplogReplay(message.oplogReplay)
                                                                    .noCursorTimeout(message.noCursorTimeout)
+
                                                ));
         } catch (Throwable exc) {
             return Cons.failure(Failures.toMongoValExc.apply(exc));

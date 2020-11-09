@@ -17,7 +17,6 @@ import vertx.effect.RegisterJsValuesCodecs;
 import vertx.effect.Val;
 import vertx.effect.VertxRef;
 import vertx.effect.exp.Quadruple;
-import vertx.effect.λ;
 import vertx.mongodb.effect.codecs.RegisterMongoEffectCodecs;
 
 import java.math.BigDecimal;
@@ -80,10 +79,10 @@ public class MongoOpsTest {
                                                                        )
         );
 
-        Quadruple.sequential(vertxRef.deploy(new RegisterJsValuesCodecs()),
-                             vertxRef.deploy(mongoClient),
-                             vertxRef.deploy(new RegisterMongoEffectCodecs()),
-                             vertxRef.deploy(dataModule)
+        Quadruple.sequential(vertxRef.deployVerticle(new RegisterJsValuesCodecs()),
+                             vertxRef.deployVerticle(mongoClient),
+                             vertxRef.deployVerticle(new RegisterMongoEffectCodecs()),
+                             vertxRef.deployVerticle(dataModule)
                             )
                  .onComplete(TestFns.pipeTo(testContext))
                  .get();
@@ -622,8 +621,8 @@ public class MongoOpsTest {
     public void test_watcher(final VertxTestContext context) {
         AtomicInteger counter = new AtomicInteger();
 
-        vertxRef.deploy(new Watcher(dataModule.collectionSupplier,
-                                    stream -> stream.forEach($ -> counter.addAndGet(1))
+        vertxRef.deployVerticle(new Watcher(dataModule.collectionSupplier,
+                                            stream -> stream.forEach($ -> counter.addAndGet(1))
         ))
                 .onSuccess(id ->
                                    Verifiers.<String>verifySuccess(it -> counter.get() == 1)
@@ -778,12 +777,8 @@ public class MongoOpsTest {
                              JsInt.of(2)
                             );
 
-        Verifiers.<Optional<JsObj>>verifySuccess(o -> Objects.equals(JsObj.of("b",
-                                                                              JsInt.of(2)
-                                                                             )
-                                                                          .union(filter),
-                                                                     o.get()
-                                                                      .delete("_id")
+        Verifiers.<Optional<JsObj>>verifySuccess(o -> Objects.equals(JsObj.of("b",JsInt.of(2)).union(filter),
+                                                                     o.get().delete("_id")
                                                                     ))
                 .accept(dataModule.insertOne.apply(obj.union(filter))
                                             .flatMap($ -> dataModule.findOneAndUpdate.apply(new UpdateMessage(filter,
@@ -821,6 +816,7 @@ public class MongoOpsTest {
                                             .flatMap(r -> dataModule.findOne.apply(FindMessage.ofFilter(filter))),
                         context
                        );
+
     }
 
 }

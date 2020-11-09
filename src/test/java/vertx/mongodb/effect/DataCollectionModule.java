@@ -1,9 +1,7 @@
 package vertx.mongodb.effect;
 
 import com.mongodb.client.MongoCollection;
-import vertx.mongodb.effect.FindMessage;
-import vertx.mongodb.effect.MongoModule;
-import vertx.mongodb.effect.UpdateMessage;
+import io.vertx.core.DeploymentOptions;
 import vertx.mongodb.effect.functions.*;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
@@ -91,7 +89,8 @@ public class DataCollectionModule extends MongoModule {
         this.deploy(INSERT_ONE_ADDRESS,
                     new InsertOne<>(collectionSupplier,
                                     insertOneResult2HexId
-                    )
+                    ),
+                    new DeploymentOptions().setInstances(4)
                    );
         this.deploy(INSERT_MANY_ADDRESS,
                     new InsertMany<>(collectionSupplier,

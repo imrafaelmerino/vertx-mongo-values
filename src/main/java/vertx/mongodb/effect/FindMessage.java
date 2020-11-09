@@ -27,6 +27,7 @@ public class FindMessage {
     public static final String PARTIAL = "partial";
     public static final String RETURN_KEY = "returnKey";
 
+
     @SuppressWarnings({"squid:S107"})
         //it's private, needed to create a builder. End user will never has to deal with it
     FindMessage(final JsObj filter,
@@ -103,7 +104,6 @@ public class FindMessage {
     public final long maxAwaitTime;
 
     public final long maxTime;
-
 
     public static FindMessage ofFilter(final JsObj filter) {
         return new FindMessageBuilder().filter(requireNonNull(filter))
