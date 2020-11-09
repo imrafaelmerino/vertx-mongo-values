@@ -495,8 +495,7 @@ Since **vertx-effect** publishes the most critical events into the address **ver
 it' possible to register consumers to explode that information. You can disable this feature 
 with the Java system property **-Dpublish.events=false**. Thanks to λc, it's possible to correlate
 different events that belongs to the same transaction.
-Go to the vertx-effect [documentation]([vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events)) 
-for further details.
+Go to the [vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events) for further details.
 
 
 ## <a name="requirements"><a/> Requirements 
