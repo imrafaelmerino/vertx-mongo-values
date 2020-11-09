@@ -506,13 +506,13 @@ for further details.
    -  [mongo driver sync](https://mongodb.github.io/mongo-java-driver/4.1/whats-new/)
 
 ## <a name="installation"><a/> Installation 
-
+```xml
 <dependency>
    <groupId>com.github.imrafaelmerino</groupId>
    <artifactId>vertx-mongodb-effect</artifactId>
    <version>0.3</version>
 </dependency>
-
+```
 
 ## <a name="release"><a/> Release process 
 Every time a tagged commit is pushed into master, a Travis CI build will be triggered automatically and 
