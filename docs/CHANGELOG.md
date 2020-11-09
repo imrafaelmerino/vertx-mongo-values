@@ -1,15 +1,9 @@
 # vertx-mongodb-effect
-## v0.2  ( Mon Nov 09 2020 02:02:26 GMT+0100 (Central European Standard Time) )
+## v0.3  ( Mon Nov 09 2020 16:32:30 GMT+0100 (Central European Standard Time) )
 
-## Bug Fixes
-  - 🐛 removed deprecated oplogreplay
-  - 🐛 ulr badge travis migration org -> com
-
-## Documentation
-  - ✏️ new sections
-
-## Refactor
-  - 💡 RegisterMongoValuesCodecs->RegisterMongoEffectCodec
+## Features
+  - 🎸 upgrade vertx-effect 0.7
+  - 🎸 replace λ by λc
 
 
 
