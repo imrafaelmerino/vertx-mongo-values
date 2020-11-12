@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>vertx-mongodb-effect</artifactId>
     <packaging>jar</packaging>
-    <version>0.3</version>
+    <version>0.4</version>
     <name>vertx.mongodb.effect</name>
     <description>When actors meet Functional Programming.
     </description>

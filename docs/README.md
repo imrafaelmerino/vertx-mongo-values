@@ -7,7 +7,7 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_vertx-mongodb-effect&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_vertx-mongodb-effect)
 
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/vertx-mongodb-effect.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/vertx-mongodb-effect)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/0.3)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/0.3/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/0.4)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/0.4/jar)
 [![](https://jitpack.io/v/imrafaelmerino/vertx-mongodb-effect.svg)](https://jitpack.io/#imrafaelmerino/vertx-mongodb-effect)
 
 - [Introduction](#introduction)
@@ -68,7 +68,10 @@ MongoClientSettings  settings =
                                 .applyConnectionString(connString)
                                 .codecRegistry(JsValuesRegistry.INSTANCE)
                                 .build();
+
 ``` 
+
+
 
 ## <a name="operations"><a/> Supported operations 
 **Every method of the MongoDB driver has an associated lambda**. Verticles can't send [sessions](https://docs.mongodb.com/manual/reference/method/Session/) 
@@ -305,7 +308,7 @@ public UpdateOne(UpdateOptions options,
 
 
 ## <a name="defmodules"><a/> Defining modules
-Like with vertx-effect, [modules](https://vertx.effect.imrafaelmerino.dev/#modules) to deploy 
+Like with vertx-effect, [modules](https://vertx.effect.imrafaelmerino.dev/#modules) deploys
 verticles and expose lambdas to communicate with them.
 The typical scenario is to create a module per collection. We can deploy or spawn verticles. 
 
@@ -509,7 +512,7 @@ Go to the [vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events) fo
 <dependency>
    <groupId>com.github.imrafaelmerino</groupId>
    <artifactId>vertx-mongodb-effect</artifactId>
-   <version>0.3</version>
+   <version>0.4</version>
 </dependency>
 ```
 
