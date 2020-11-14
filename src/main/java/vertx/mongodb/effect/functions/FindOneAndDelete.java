@@ -1,6 +1,5 @@
 package vertx.mongodb.effect.functions;
 
-import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.FindOneAndDeleteOptions;
 import io.vertx.core.MultiMap;
@@ -10,7 +9,6 @@ import vertx.mongodb.effect.Failures;
 import jsonvalues.JsObj;
 import vertx.effect.exp.Cons;
 import vertx.effect.Val;
-import vertx.effect.λ;
 
 import java.util.function.Supplier;
 
@@ -21,7 +19,6 @@ public class FindOneAndDelete implements λc<JsObj, JsObj> {
 
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
     private final FindOneAndDeleteOptions options;
-    private ClientSession session;
     private static final FindOneAndDeleteOptions DEFAULT_OPTIONS = new FindOneAndDeleteOptions();
 
 
@@ -37,14 +34,6 @@ public class FindOneAndDelete implements λc<JsObj, JsObj> {
         this.collectionSupplier = requireNonNull(collectionSupplier);
     }
 
-    public FindOneAndDelete(final Supplier<MongoCollection<JsObj>> collectionSupplier,
-                            final FindOneAndDeleteOptions options,
-                            final ClientSession session) {
-        this(collectionSupplier,
-             options
-            );
-        this.session = requireNonNull(session);
-    }
 
     @Override
     public Val<JsObj> apply(final MultiMap context,final JsObj query) {
@@ -52,12 +41,7 @@ public class FindOneAndDelete implements λc<JsObj, JsObj> {
 
         try {
             var collection = this.collectionSupplier.get();
-            return Cons.success(session != null ?
-                                collection.findOneAndDelete(session,
-                                                            Converters.jsObj2Bson.apply(query),
-                                                            options
-                                                           ) :
-                                collection
+            return Cons.success(collection
                                         .findOneAndDelete(Converters.jsObj2Bson.apply(query),
                                                           options
                                                          ));

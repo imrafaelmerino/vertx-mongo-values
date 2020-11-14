@@ -1,8 +1,8 @@
 {
     "app_name": "vertx-mongodb-effect",
-    "branch" : "release-0.4",
+    "branch" : "release-0.5",
     "repo_url": "",
-    "version_name" : "v0.4",
+    "version_name" : "v0.5",
     "file": "docs/CHANGELOG.md",
     "template": ".gitlog-template.md",
     "sections": [

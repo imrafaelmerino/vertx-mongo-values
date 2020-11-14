@@ -11,7 +11,6 @@ import vertx.mongodb.effect.UpdateMessage;
 import jsonvalues.JsObj;
 import vertx.effect.exp.Cons;
 import vertx.effect.Val;
-import vertx.effect.λ;
 
 import java.util.function.Supplier;
 
@@ -22,7 +21,6 @@ public class FindOneAndReplace implements λc<UpdateMessage, JsObj> {
 
     private final FindOneAndReplaceOptions options;
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
-    private ClientSession session;
     private static final FindOneAndReplaceOptions DEFAULT_OPTIONS = new FindOneAndReplaceOptions();
 
 
@@ -38,14 +36,6 @@ public class FindOneAndReplace implements λc<UpdateMessage, JsObj> {
             );
     }
 
-    public FindOneAndReplace(final Supplier<MongoCollection<JsObj>> collectionSupplier,
-                             final FindOneAndReplaceOptions options,
-                             final ClientSession session) {
-        this(collectionSupplier,
-             options
-            );
-        this.session = requireNonNull(session);
-    }
 
 
     @Override
@@ -54,13 +44,7 @@ public class FindOneAndReplace implements λc<UpdateMessage, JsObj> {
 
         try {
             var collection = requireNonNull(this.collectionSupplier.get());
-            return Cons.success(session != null ?
-                                collection
-                                        .findOneAndReplace(session,
-                                                           Converters.jsObj2Bson.apply(message.filter),
-                                                           message.update,
-                                                           options
-                                                          ) :
+            return Cons.success(
                                 collection
                                         .findOneAndReplace(Converters.jsObj2Bson.apply(message.filter),
                                                            message.update,

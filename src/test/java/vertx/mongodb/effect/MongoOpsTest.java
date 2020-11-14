@@ -45,30 +45,19 @@ public class MongoOpsTest {
 
     static MongoClientSettings settings;
 
-    private static VertxRef vertxRef;
-
-
-    static {
-
-        try {
-            ConnectionString connString = new ConnectionString(
-                    "mongodb://localhost:27017/?connectTimeoutMS=10000&socketTimeoutMS=10000&serverSelectionTimeoutMS=10000"
-            );
-            settings = MongoClientSettings.builder()
-                                          .applyConnectionString(connString)
-                                          .codecRegistry(JsValuesRegistry.INSTANCE)
-                                          .build();
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-
-
-    }
 
     @BeforeAll
     public static void prepare(Vertx vertx,
                                VertxTestContext testContext
                               ) {
+        ConnectionString connString = new ConnectionString(
+                "mongodb://localhost:27017/?connectTimeoutMS=10000&socketTimeoutMS=10000&serverSelectionTimeoutMS=10000"
+        );
+
+        settings = MongoClientSettings.builder()
+                                      .applyConnectionString(connString)
+                                      .codecRegistry(JsValuesRegistry.INSTANCE)
+                                      .build();
 
         VertxRef vertxRef = new VertxRef(vertx);
 
@@ -76,8 +65,7 @@ public class MongoOpsTest {
 
         dataModule = new DataCollectionModule(mongoClient.getCollection("test",
                                                                         "Data"
-                                                                       )
-        );
+                                                                       ));
 
         Quadruple.sequential(vertxRef.deployVerticle(new RegisterJsValuesCodecs()),
                              vertxRef.deployVerticle(mongoClient),
@@ -618,7 +606,10 @@ public class MongoOpsTest {
 
     @Test
     @Disabled //test only valid for replicaSet
-    public void test_watcher(final VertxTestContext context) {
+    public void test_watcher(final VertxTestContext context,
+                             final Vertx vertx) {
+        VertxRef vertxRef = new VertxRef(vertx);
+
         AtomicInteger counter = new AtomicInteger();
 
         vertxRef.deployVerticle(new Watcher(dataModule.collectionSupplier,
@@ -777,8 +768,11 @@ public class MongoOpsTest {
                              JsInt.of(2)
                             );
 
-        Verifiers.<Optional<JsObj>>verifySuccess(o -> Objects.equals(JsObj.of("b",JsInt.of(2)).union(filter),
-                                                                     o.get().delete("_id")
+        Verifiers.<Optional<JsObj>>verifySuccess(o -> Objects.equals(JsObj.of("b",
+                                                                              JsInt.of(2))
+                                                                          .union(filter),
+                                                                     o.get()
+                                                                      .delete("_id")
                                                                     ))
                 .accept(dataModule.insertOne.apply(obj.union(filter))
                                             .flatMap($ -> dataModule.findOneAndUpdate.apply(new UpdateMessage(filter,

@@ -1,18 +1,16 @@
 package vertx.mongodb.effect.functions;
 
-import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.result.UpdateResult;
 import io.vertx.core.MultiMap;
+import jsonvalues.JsObj;
+import vertx.effect.Val;
+import vertx.effect.exp.Cons;
 import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import vertx.mongodb.effect.Failures;
 import vertx.mongodb.effect.UpdateMessage;
-import jsonvalues.JsObj;
-import vertx.effect.exp.Cons;
-import vertx.effect.Val;
-import vertx.effect.λ;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -25,20 +23,7 @@ public class ReplaceOne<O> implements λc<UpdateMessage, O> {
     private final Function<UpdateResult, O> resultConverter;
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
     private final ReplaceOptions options;
-    private ClientSession session;
     public static final ReplaceOptions DEFAULT_OPTIONS = new ReplaceOptions();
-
-
-    public ReplaceOne(final Supplier<MongoCollection<JsObj>> collectionSupplier,
-                      final Function<UpdateResult, O> resultConverter,
-                      final ReplaceOptions options,
-                      final ClientSession session) {
-        this(collectionSupplier,
-             resultConverter,
-             options
-            );
-        this.session = requireNonNull(session);
-    }
 
 
     public ReplaceOne(final Supplier<MongoCollection<JsObj>> collectionSupplier,
@@ -60,24 +45,17 @@ public class ReplaceOne<O> implements λc<UpdateMessage, O> {
 
 
     @Override
-    public Val<O> apply(final MultiMap context,final UpdateMessage message) {
+    public Val<O> apply(final MultiMap context,
+                        final UpdateMessage message) {
         if (message == null) return Cons.failure(new IllegalArgumentException("message is null"));
 
         try {
             var collection = requireNonNull(this.collectionSupplier.get());
-            return Cons.success(session != null ?
-                                resultConverter.apply(
-                                        collection.replaceOne(session,
-                                                              Converters.jsObj2Bson.apply(message.filter),
-                                                              message.update,
-                                                              options
-                                                             )
-                                                     ) :
-                                resultConverter.apply(
-                                        collection.replaceOne(Converters.jsObj2Bson.apply(message.filter),
-                                                              message.update,
-                                                              options
-                                                             )
+            return Cons.success(resultConverter.apply(
+                    collection.replaceOne(Converters.jsObj2Bson.apply(message.filter),
+                                          message.update,
+                                          options
+                                         )
                                                      ));
         } catch (Exception exc) {
             return Cons.failure(Failures.toMongoValExc.apply(exc));

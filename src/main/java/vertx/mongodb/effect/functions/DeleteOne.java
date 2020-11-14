@@ -24,7 +24,6 @@ public class DeleteOne<O> implements λc<JsObj, O> {
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
     private final Function<DeleteResult, O> resultConverter;
     private final DeleteOptions options;
-    private ClientSession session;
     private static final DeleteOptions DEFAULT_OPTIONS = new DeleteOptions();
 
 
@@ -43,28 +42,12 @@ public class DeleteOne<O> implements λc<JsObj, O> {
         this.options = DEFAULT_OPTIONS;
     }
 
-
-    public DeleteOne(final Supplier<MongoCollection<JsObj>> collectionSupplier,
-                     final Function<DeleteResult, O> resultConverter,
-                     final DeleteOptions options,
-                     final ClientSession session) {
-        this(collectionSupplier,
-             resultConverter,
-             options
-            );
-        this.session = requireNonNull(session);
-    }
-
     @Override
     public Val<O> apply(final MultiMap context,final JsObj query) {
         if (query == null) return Cons.failure(new IllegalArgumentException("query is null"));
         try {
             var collection = requireNonNull(this.collectionSupplier.get());
-            return Cons.success(resultConverter.apply(session != null ?
-                                                      collection.deleteOne(session,
-                                                                           Converters.jsObj2Bson.apply(requireNonNull(query)),
-                                                                           options
-                                                                          ) :
+            return Cons.success(resultConverter.apply(
                                                       collection.deleteOne(Converters.jsObj2Bson.apply(requireNonNull(query)),
                                                                            options
                                                                           )

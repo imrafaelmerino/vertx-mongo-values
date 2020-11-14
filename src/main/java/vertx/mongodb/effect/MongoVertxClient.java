@@ -48,9 +48,10 @@ public class MongoVertxClient extends AbstractVerticle {
                     try {
                         mongoClient = result = MongoClients.create(requireNonNull(settings));
                         getDatabase = name -> mongoClient.getDatabase(requireNonNull(name));
-                        getCollectionFromMongoDB = db -> name -> requireNonNull(db).getCollection(requireNonNull(name),
-                                                                                                  JsObj.class
-                                                                                                 );
+                        getCollectionFromMongoDB =
+                                db -> name -> requireNonNull(db).getCollection(requireNonNull(name),
+                                                                               JsObj.class
+                                                                              );
                         startPromise.complete();
                     } catch (Exception error) {
                         startPromise.fail(error);
