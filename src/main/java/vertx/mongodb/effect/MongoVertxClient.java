@@ -29,6 +29,7 @@ public class MongoVertxClient extends AbstractVerticle {
         };
     }
 
+    @SuppressWarnings({"squid:S3077"})
     private volatile MongoClient mongoClient;
 
     private Function<MongoDatabase, Function<String, MongoCollection<JsObj>>> getCollectionFromMongoDB;
