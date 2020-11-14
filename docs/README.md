@@ -7,7 +7,7 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_vertx-mongodb-effect&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_vertx-mongodb-effect)
 
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/vertx-mongodb-effect.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/vertx-mongodb-effect)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/0.4)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/0.4/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/0.5)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/0.5/jar)
 [![](https://jitpack.io/v/imrafaelmerino/vertx-mongodb-effect.svg)](https://jitpack.io/#imrafaelmerino/vertx-mongodb-effect)
 
 - [Introduction](#introduction)
@@ -74,8 +74,7 @@ MongoClientSettings  settings =
 
 
 ## <a name="operations"><a/> Supported operations 
-**Every method of the MongoDB driver has an associated lambda**. Verticles can't send [sessions](https://docs.mongodb.com/manual/reference/method/Session/) 
-and [transactions](https://docs.mongodb.com/manual/core/transactions/) across the event bus; nevertheless, [spawning](https://vertx.effect.imrafaelmerino.dev/#spawning-verticles) verticles opens the door to using them. 
+**Every method of the MongoDB driver has an associated lambda**.  
 
 Since **vertx-mongodb-effect** uses the driver API directly, it can benefit from all its features and methods. 
 **It's an advantage over the official vertx-mongodb-client**.
@@ -99,18 +98,12 @@ public Count(Supplier<MongoCollection<JsObj>> collectionSupplier,
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.DeleteOptions;
 import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.ClientSession;
 
 public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<DeleteResult, O> resultConverter,
                   DeleteOptions options 
                  )
                       
-public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                  Function<DeleteResult, O> resultConverter,
-                  DeleteOptions options,
-                  ClientSession session 
-                 )                           
 ```   
     
 **DeleteOne :: λc<JsObj, O>**
@@ -119,18 +112,12 @@ public DeleteMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.DeleteOptions;
 import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.ClientSession;
 
 public DeleteOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                  Function<DeleteResult, O> resultConverter,
                  DeleteOptions options 
                 )
                       
-public DeleteOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                 Function<DeleteResult, O> resultConverter,
-                 DeleteOptions options,
-                 ClientSession session
-                )      
 ```
 
 **FindAll :: λc<FindMessage, JsArray>**
@@ -161,16 +148,10 @@ public FindOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
 ```java
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.FindOneAndDeleteOptions;
-import com.mongodb.client.ClientSession;
 
 public FindOneAndDelete(Supplier<MongoCollection<JsObj>> collectionSupplier,
                         FindOneAndDeleteOptions options
                        ) 
-
-public FindOneAndDelete(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                        FindOneAndDeleteOptions options,
-                        ClientSession session 
-                       )     
 ```   
 
 **FindOneAndReplace :: λc<UpdateMessage, JsObj>**
@@ -178,16 +159,10 @@ public FindOneAndDelete(Supplier<MongoCollection<JsObj>> collectionSupplier,
 ```java
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
-import com.mongodb.client.ClientSession;
 
 public FindOneAndReplace(Supplier<MongoCollection<JsObj>> collectionSupplier,
                          FindOneAndReplaceOptions options
                         )   
-
-public FindOneAndReplace(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                         FindOneAndReplaceOptions options,
-                         ClientSession session
-                        )  
 ```    
 
 **FindOneAndUpdate :: λc<UpdateMessage, JsObj>**
@@ -195,16 +170,10 @@ public FindOneAndReplace(Supplier<MongoCollection<JsObj>> collectionSupplier,
 ```java
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
-import com.mongodb.client.ClientSession;
 
 public FindOneAndUpdate(Supplier<MongoCollection<JsObj>> collectionSupplier,
                         FindOneAndUpdateOptions options
                        )
-
-public FindOneAndUpdate(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                        FindOneAndUpdateOptions options,
-                        ClientSession session
-                       )     
 ```    
 
 **InsertMany :: λc<JsArray, R>**
@@ -213,18 +182,11 @@ public FindOneAndUpdate(Supplier<MongoCollection<JsObj>> collectionSupplier,
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.InsertManyResult;
 import com.mongodb.client.model.InsertManyOptions;
-import com.mongodb.client.ClientSession;
 
 public InsertMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<InsertManyResult, R> resultConverter,
                   InsertManyOptions options
                  )   
-
-public InsertMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                  Function<InsertManyResult, R> resultConverter,
-                  InsertManyOptions options,
-                  ClientSession session 
-                 ) 
 ```    
 
 **InsertOne :: λc<JsObj, R>**
@@ -233,18 +195,11 @@ public InsertMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.model.InsertOneOptions;
-import com.mongodb.client.ClientSession;
 
 public InsertOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                  Function<InsertOneResult, R> resultConverter,
                  InsertOneOptions options
                 )    
-
-public InsertOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                 Function<InsertOneResult, R> resultConverter,
-                 InsertOneOptions options,
-                 ClientSession session
-                ) 
 ```    
 
 **ReplaceOne :: λc<UpdateMessage, O>**
@@ -253,18 +208,11 @@ public InsertOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.client.ClientSession;
 
 public ReplaceOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<UpdateResult, O> resultConverter,
                   ReplaceOptions options
                  )   
-
-public ReplaceOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
-                  Function<UpdateResult, O> resultConverter,
-                  ReplaceOptions options,
-                  ClientSession session
-                 )  
 ```    
 **UpdateMany :: λc<UpdateMessage, O>**
 
@@ -272,18 +220,11 @@ public ReplaceOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.client.model.UpdateOptions
-import com.mongodb.client.ClientSession;
 
 public UpdateMany(Supplier<MongoCollection<JsObj>> collectionSupplier,
                   Function<UpdateResult, O> resultConverter,
                   UpdateOptions options
                  )
-
-public UpdateMany(UpdateOptions options,
-                  Supplier<MongoCollection<JsObj>> collectionSupplier,
-                  Function<UpdateResult, O> resultConverter,
-                  ClientSession session
-                 )     
 ```    
 
 **UpdateOne :: λc<UpdateMessage, O>**
@@ -292,18 +233,11 @@ public UpdateMany(UpdateOptions options,
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.client.model.UpdateOptions
-import com.mongodb.client.ClientSession;
 
 public UpdateOne(Supplier<MongoCollection<JsObj>> collectionSupplier,
                  Function<UpdateResult, O> resultConverter,
                  UpdateOptions options
                 )
-
-public UpdateOne(UpdateOptions options,
-                 Supplier<MongoCollection<JsObj>> collectionSupplier,
-                 Function<UpdateResult, O> resultConverter,
-                 ClientSession session
-                )     
 ```    
 
 
@@ -512,7 +446,7 @@ Go to the [vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events) fo
 <dependency>
    <groupId>com.github.imrafaelmerino</groupId>
    <artifactId>vertx-mongodb-effect</artifactId>
-   <version>0.4</version>
+   <version>0.5</version>
 </dependency>
 ```
 

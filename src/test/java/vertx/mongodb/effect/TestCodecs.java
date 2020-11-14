@@ -1,4 +1,4 @@
-package vertx.mongodb.effect.codecs;
+package vertx.mongodb.effect;
 
 
 import io.vertx.core.buffer.Buffer;
@@ -9,6 +9,8 @@ import vertx.mongodb.effect.FindMessageBuilder;
 import vertx.mongodb.effect.UpdateMessage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import vertx.mongodb.effect.codecs.FindMessageCodec;
+import vertx.mongodb.effect.codecs.UpdateMessageCodec;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;

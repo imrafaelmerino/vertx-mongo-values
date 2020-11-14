@@ -1,6 +1,5 @@
 package vertx.mongodb.effect.functions;
 
-import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
@@ -12,8 +11,6 @@ import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import vertx.mongodb.effect.Failures;
 import vertx.mongodb.effect.UpdateMessage;
-
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -25,7 +22,6 @@ public class UpdateOne<O> implements λc<UpdateMessage, O> {
     public final Supplier<MongoCollection<JsObj>> collectionSupplier;
     public final Function<UpdateResult, O> resultConverter;
     public final UpdateOptions options;
-    private ClientSession session;
     private static final UpdateOptions DEFAULT_OPTIONS = new UpdateOptions();
 
     public UpdateOne(final Supplier<MongoCollection<JsObj>> collectionSupplier,
@@ -44,17 +40,6 @@ public class UpdateOne<O> implements λc<UpdateMessage, O> {
     }
 
 
-    public UpdateOne(final Supplier<MongoCollection<JsObj>> collectionSupplier,
-                     final Function<UpdateResult, O> resultConverter,
-                     final UpdateOptions options,
-                     final ClientSession session) {
-        this(collectionSupplier,
-             resultConverter,
-             options
-            );
-        this.session = Objects.requireNonNull(session);
-    }
-
     @Override
     public Val<O> apply(final MultiMap context,
                         final UpdateMessage message) {
@@ -62,13 +47,7 @@ public class UpdateOne<O> implements λc<UpdateMessage, O> {
 
         try {
             var collection = requireNonNull(this.collectionSupplier.get());
-            return Cons.success(session != null ?
-                                resultConverter.apply(collection.updateOne(session,
-                                                                           Converters.jsObj2Bson.apply(message.filter),
-                                                                           Converters.jsObj2Bson.apply(message.update),
-                                                                           options
-                                                                          )
-                                                     ) :
+            return Cons.success(
                                 resultConverter.apply(collection.updateOne(Converters.jsObj2Bson.apply(message.filter),
                                                                            Converters.jsObj2Bson.apply(message.update),
                                                                            options

@@ -26,18 +26,8 @@ public class InsertMany<R> implements λc<JsArray, R> {
     private final Supplier<MongoCollection<JsObj>> collectionSupplier;
     private final InsertManyOptions options;
     private final Function<InsertManyResult, R> resultConverter;
-    private ClientSession session;
 
-    public InsertMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
-                      final InsertManyOptions options,
-                      final Function<InsertManyResult, R> resultConverter,
-                      final ClientSession session) {
-        this(collectionSupplier,
-             resultConverter,
-             options
-            );
-        this.session = session;
-    }
+
 
     public InsertMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                       final Function<InsertManyResult, R> resultConverter) {
@@ -64,14 +54,7 @@ public class InsertMany<R> implements λc<JsArray, R> {
             var docs       = Converters.jsArray2ListOfJsObj.apply(message);
             var collection = requireNonNull(collectionSupplier.get());
 
-            return Cons.success(session != null ?
-                                resultConverter.apply(collection
-                                                              .insertMany(session,
-                                                                          docs,
-                                                                          options
-                                                                         )
-                                                     ) :
-                                resultConverter.apply(collection
+            return Cons.success(resultConverter.apply(collection
                                                               .insertMany(docs,
                                                                           options
                                                                          )
