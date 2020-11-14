@@ -364,6 +364,7 @@ create a _MessageCodec_.
 ```java
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import vertx.mongodb.effect.MongoVertxClient;
 import vertx.effect.VertxRef;
 
 // define every timeout if you wanna be reactive
