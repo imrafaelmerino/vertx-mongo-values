@@ -4,9 +4,12 @@ package vertx.mongodb.effect;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import io.vertx.core.Vertx;
+import io.vertx.junit5.Checkpoint;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import jsonvalues.*;
+import jsonvalues.gen.JsGens;
+import jsonvalues.gen.JsObjGen;
 import mongovalues.JsValuesRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,6 +32,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 import static jsonvalues.JsBool.FALSE;
 import static jsonvalues.JsBool.TRUE;
@@ -80,6 +85,47 @@ public class MongoOpsTest {
         vertxRef.registerConsumer(VertxRef.EVENTS_ADDRESS,
                                   System.out::println
                                  );
+    }
+
+
+    @Test
+    public void testInsert(VertxTestContext testContext) throws InterruptedException {
+
+        int        number = 1000;
+        Checkpoint checkpoint             = testContext.checkpoint(number);
+        var gen = JsObjGen.of("a",
+                              JsGens.alphabetic,
+                              "b",
+                              JsGens.integer
+                             );
+
+        Supplier<JsObj> supplier = gen.apply(new Random());
+
+
+        IntStream.range(0,
+                        number
+                       )
+                 .parallel()
+                 .forEach(i -> {
+                     JsObj obj = supplier.get();
+                     dataModule.insertOne.apply(obj)
+                                         .flatMap(id -> dataModule.findOne.apply(FindMessage
+                                                                                         .ofFilter(str2Oid.apply(id))
+                                                                                )
+                                                                          .map(it -> it.get()
+                                                                                       .delete("_id"))
+                                                                          .onSuccess(a -> {
+                                                                              Assertions.assertEquals(obj,
+                                                                                                      a
+                                                                                                     );
+                                                                              checkpoint.flag();
+                                                                          })
+                                                 ).get();
+
+                 });
+
+
+
     }
 
     @Test
@@ -769,7 +815,8 @@ public class MongoOpsTest {
                             );
 
         Verifiers.<Optional<JsObj>>verifySuccess(o -> Objects.equals(JsObj.of("b",
-                                                                              JsInt.of(2))
+                                                                              JsInt.of(2)
+                                                                             )
                                                                           .union(filter),
                                                                      o.get()
                                                                       .delete("_id")

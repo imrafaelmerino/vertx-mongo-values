@@ -7,7 +7,7 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_vertx-mongodb-effect&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_vertx-mongodb-effect)
 
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/vertx-mongodb-effect.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/vertx-mongodb-effect)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/0.5)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/0.5/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/1.0.0-RC1)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/1.0.0-RC1/jar)
 [![](https://jitpack.io/v/imrafaelmerino/vertx-mongodb-effect.svg)](https://jitpack.io/#imrafaelmerino/vertx-mongodb-effect)
 
 - [Introduction](#introduction)
@@ -447,7 +447,7 @@ Go to the [vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events) fo
 <dependency>
    <groupId>com.github.imrafaelmerino</groupId>
    <artifactId>vertx-mongodb-effect</artifactId>
-   <version>0.5</version>
+   <version>1.0.0-RC1</version>
 </dependency>
 ```
 
