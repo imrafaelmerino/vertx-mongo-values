@@ -6,7 +6,7 @@
     <groupId>com.github.imrafaelmerino</groupId>
     <artifactId>vertx-mongodb-effect</artifactId>
     <packaging>jar</packaging>
-    <version>0.5</version>
+    <version>1.0.0-RC1</version>
     <name>vertx.mongodb.effect</name>
     <description>When actors meet Functional Programming.
     </description>
@@ -35,13 +35,13 @@
         <JACOCO-MAVEN-PLUGIN.VERSION>0.8.4</JACOCO-MAVEN-PLUGIN.VERSION>
         <MAVEN-JAVADOC-PLUGIN.VERSION>3.1.1</MAVEN-JAVADOC-PLUGIN.VERSION>
         <MAVEN-SOURCE-PLUGIN.VERSION>3.0.1</MAVEN-SOURCE-PLUGIN.VERSION>
-        <MAVEN-SUREFIRE-PLUGIN.VERSION>2.22.1</MAVEN-SUREFIRE-PLUGIN.VERSION>
+        <MAVEN-SUREFIRE-PLUGIN.VERSION>2.22.0</MAVEN-SUREFIRE-PLUGIN.VERSION>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <MAVEN-COMPILER-PLUGIN.VERSION>3.1</MAVEN-COMPILER-PLUGIN.VERSION>
         <MAVEN-COMPILER-PLUGIN.SOURCE>11</MAVEN-COMPILER-PLUGIN.SOURCE>
         <MAVEN-COMPILER-PLUGIN.TARGET>11</MAVEN-COMPILER-PLUGIN.TARGET>
-        <MONGO-VALUES-VERSION>0.5</MONGO-VALUES-VERSION>
-        <VERTX-EFFECT-VERSION>0.9</VERTX-EFFECT-VERSION>
+        <MONGO-VALUES-VERSION>1.0.0-RC1</MONGO-VALUES-VERSION>
+        <VERTX-EFFECT-VERSION>1.0.0-RC2</VERTX-EFFECT-VERSION>
         <VERTX-TEST-VERSION>4.0.0.CR1</VERTX-TEST-VERSION>
         <JUNIT-JUPITER-ENGINE.VERSION>5.6.2</JUNIT-JUPITER-ENGINE.VERSION>
         <SLF4J-API.VERSION>1.7.30</SLF4J-API.VERSION>
@@ -68,6 +68,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${MAVEN-SUREFIRE-PLUGIN.VERSION}</version>
+                <configuration>
+                    <argLine>-XX:+FlightRecorder -XX:StartFlightRecording=duration=180s,filename=vertx-mongo-effect-recording.jfr</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -92,7 +95,7 @@
         <dependency>
             <groupId>com.github.imrafaelmerino</groupId>
             <artifactId>mongo-values</artifactId>
-            <version>${MONGO-VALUES-VERSION}</version>
+            <version>0.5</version>
         </dependency>
 
         <dependency>
