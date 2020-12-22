@@ -1,6 +1,5 @@
 package vertx.mongodb.effect.functions;
 
-import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.UpdateResult;
@@ -9,7 +8,6 @@ import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import vertx.mongodb.effect.UpdateMessage;
 import jsonvalues.JsObj;
-import vertx.mongodb.effect.Failures;
 import vertx.effect.exp.Cons;
 import vertx.effect.Val;
 
@@ -60,7 +58,7 @@ public class UpdateMany<O> implements λc<UpdateMessage, O> {
                                                      )
                                );
         } catch (Exception exc) {
-            return Cons.failure(Failures.toMongoValExc.apply(exc));
+            return Cons.failure(Functions.toMongoValExc.apply(exc));
 
         }
     }

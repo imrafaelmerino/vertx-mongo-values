@@ -9,7 +9,6 @@ import jsonvalues.JsObj;
 import vertx.effect.Val;
 import vertx.effect.exp.Cons;
 import vertx.effect.λc;
-import vertx.mongodb.effect.Failures;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -56,7 +55,7 @@ public class InsertOne<R> implements λc<JsObj, R> {
                                                                         )
                                                      ));
         } catch (Exception exc) {
-            return Cons.failure(Failures.toMongoValExc.apply(exc));
+            return Cons.failure(Functions.toMongoValExc.apply(exc));
 
         }
 

@@ -5,11 +5,9 @@ import com.mongodb.client.model.CountOptions;
 import io.vertx.core.MultiMap;
 import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
-import vertx.mongodb.effect.Failures;
 import jsonvalues.JsObj;
 import vertx.effect.exp.Cons;
 import vertx.effect.Val;
-import vertx.effect.λ;
 
 import java.util.function.Supplier;
 
@@ -44,7 +42,7 @@ public class Count implements λc<JsObj, Long> {
                                                           options
                                                          ));
         } catch (Exception exc) {
-            return Cons.failure(Failures.toMongoValExc.apply(exc));
+            return Cons.failure(Functions.toMongoValExc.apply(exc));
         }
 
 
