@@ -80,8 +80,6 @@ public class MongoOpsTest {
                  .onComplete(TestFns.pipeTo(testContext))
                  .get();
 
-        vertxRef = new VertxRef(vertx);
-
 
     }
 
