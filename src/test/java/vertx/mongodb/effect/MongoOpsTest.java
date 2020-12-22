@@ -82,16 +82,14 @@ public class MongoOpsTest {
 
         vertxRef = new VertxRef(vertx);
 
-        vertxRef.registerConsumer(VertxRef.EVENTS_ADDRESS,
-                                  System.out::println
-                                 );
+
     }
 
 
     @Test
     public void testInsert(VertxTestContext testContext) throws InterruptedException {
 
-        int        number = 1000;
+        int        number = 100;
         Checkpoint checkpoint             = testContext.checkpoint(number);
         var gen = JsObjGen.of("a",
                               JsGens.alphabetic,

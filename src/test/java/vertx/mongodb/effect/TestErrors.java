@@ -11,7 +11,6 @@ import jsonvalues.JsInt;
 import jsonvalues.JsObj;
 import jsonvalues.JsStr;
 import mongovalues.JsValuesRegistry;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import vertx.effect.Failures;
@@ -28,12 +27,6 @@ public class TestErrors {
 
 
     private static FindOne findOne;
-
-
-    @BeforeAll
-    private static void prepare() {
-
-    }
 
     private static Supplier<MongoCollection<JsObj>> getMongoCollectionSupplier(String connectionString) {
         ConnectionString connString = new ConnectionString(connectionString);
