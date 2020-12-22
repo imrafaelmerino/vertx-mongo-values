@@ -5,7 +5,6 @@ import com.mongodb.client.model.FindOneAndDeleteOptions;
 import io.vertx.core.MultiMap;
 import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
-import vertx.mongodb.effect.Failures;
 import jsonvalues.JsObj;
 import vertx.effect.exp.Cons;
 import vertx.effect.Val;
@@ -46,7 +45,7 @@ public class FindOneAndDelete implements λc<JsObj, JsObj> {
                                                           options
                                                          ));
         } catch (Exception exc) {
-            return Cons.failure(Failures.toMongoValExc.apply(exc));
+            return Cons.failure(Functions.toMongoValExc.apply(exc));
 
         }
     }

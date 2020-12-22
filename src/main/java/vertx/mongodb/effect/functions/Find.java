@@ -8,7 +8,6 @@ import vertx.effect.Val;
 import vertx.effect.exp.Cons;
 import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
-import vertx.mongodb.effect.Failures;
 import vertx.mongodb.effect.FindMessage;
 
 import java.util.function.Function;
@@ -65,7 +64,7 @@ class Find<O> implements λc<FindMessage, O> {
 
                                                ));
         } catch (Throwable exc) {
-            return Cons.failure(Failures.toMongoValExc.apply(exc));
+            return Cons.failure(Functions.toMongoValExc.apply(exc));
         }
     }
 }

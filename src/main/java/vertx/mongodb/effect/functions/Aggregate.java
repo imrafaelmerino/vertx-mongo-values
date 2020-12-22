@@ -10,7 +10,6 @@ import vertx.effect.Val;
 import vertx.effect.exp.Cons;
 import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
-import vertx.mongodb.effect.Failures;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -38,7 +37,7 @@ public class Aggregate<O> implements λc<JsArray, O> {
             var collection = requireNonNull(this.collectionSupplier.get());
             return Cons.success(resultConverter.apply(collection.aggregate(pipeline)));
         } catch (Throwable exc) {
-            return Cons.failure(Failures.toMongoValExc.apply(exc));
+            return Cons.failure(Functions.toMongoValExc.apply(exc));
         }
     }
 }

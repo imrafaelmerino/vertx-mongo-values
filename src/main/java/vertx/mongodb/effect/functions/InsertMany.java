@@ -1,19 +1,16 @@
 package vertx.mongodb.effect.functions;
 
 
-import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.InsertManyOptions;
 import com.mongodb.client.result.InsertManyResult;
 import io.vertx.core.MultiMap;
 import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
-import vertx.mongodb.effect.Failures;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
 import vertx.effect.exp.Cons;
 import vertx.effect.Val;
-import vertx.effect.λ;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -60,7 +57,7 @@ public class InsertMany<R> implements λc<JsArray, R> {
                                                                          )
                                                      ));
         } catch (Throwable exc) {
-            return Cons.failure(Failures.toMongoValExc.apply(exc));
+            return Cons.failure(Functions.toMongoValExc.apply(exc));
 
         }
     }

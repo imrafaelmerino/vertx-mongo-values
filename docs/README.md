@@ -420,11 +420,10 @@ BiFunction<Integer,String,Val<Optional<JsObj>>> findByCode = (attempts,code) ->
                                                                 )
                                                         ) 
                                    )                    
-                            .retryIf(e -> Failures.MONGO_TIMEOUT_PRISM.getOptional
-                                                                      .apply(e)
-                                                                      .isPresent(),
-                                     attempts
-                                     )
+                            .retry(e -> Failures.anyOf(MONGO_CONNECT_TIMEOUT_CODE,
+                                                         MONGO_READ_TIMEOUT_CODE),
+                                   attempts
+                                  )
                             .recoverWith(e -> Cons.success(Optional.empty()));
 ```
 ## <a name="events"><a/> Publishing events
@@ -441,6 +440,7 @@ Go to the [vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events) fo
    -  Java 11 or greater
    -  [vertx-effect](https://vertx.effect.imrafaelmerino.dev)
    -  [mongo driver sync](https://mongodb.github.io/mongo-java-driver/4.1/whats-new/)
+   -  [Mongo values](https://github.com/imrafaelmerino/mongo-values)
 
 ## <a name="installation"><a/> Installation 
 ```xml

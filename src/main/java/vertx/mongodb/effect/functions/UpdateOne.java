@@ -9,7 +9,6 @@ import vertx.effect.Val;
 import vertx.effect.exp.Cons;
 import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
-import vertx.mongodb.effect.Failures;
 import vertx.mongodb.effect.UpdateMessage;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -55,7 +54,7 @@ public class UpdateOne<O> implements λc<UpdateMessage, O> {
                                                      )
                                );
         } catch (Exception exc) {
-            return Cons.failure(Failures.toMongoValExc.apply(exc));
+            return Cons.failure(Functions.toMongoValExc.apply(exc));
 
         }
 
