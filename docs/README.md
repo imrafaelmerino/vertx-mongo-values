@@ -421,7 +421,8 @@ BiFunction<Integer,String,Val<Optional<JsObj>>> findByCode = (attempts,code) ->
                                                         ) 
                                    )                    
                             .retry(e -> Failures.anyOf(MONGO_CONNECT_TIMEOUT_CODE,
-                                                         MONGO_READ_TIMEOUT_CODE),
+                                                       MONGO_READ_TIMEOUT_CODE
+                                                      ),
                                    attempts
                                   )
                             .recoverWith(e -> Cons.success(Optional.empty()));
