@@ -1,6 +1,6 @@
 {
     "app_name": "vertx-mongodb-effect",
-    "branch" : "1.0.0-RC2",
+    "branch" : "1.0.0-RC3",
     "repo_url": "",
     "version_name" : "vv1.0.0-RC2",
     "file": "docs/CHANGELOG.md",
