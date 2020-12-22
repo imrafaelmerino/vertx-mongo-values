@@ -16,6 +16,7 @@
 - [Defining modules](#defmodules)
 - [Deploying modules](#depmodules)
 - [Publishing events](#events)
+- [Java Flight Record support](#jfr)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Release process](#release)
@@ -435,6 +436,20 @@ with the Java system property **-Dpublish.events=false**. Thanks to λc, it's po
 different events that belongs to the same transaction.
 Go to the [vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events) for further details.
 
+### <a name="jfr"><a/> JFR support
+Since vertx-effect supports JFR, all the verticle messages have an associated event and can be visualized using
+Java Mission Control. 
+
+Fields of a verticle message event:
+
+    - address: Address of the Verticle where the message is sent to
+    - result: SUCCESS OR FAILURE, dependening on what the caller receives
+    - failure code: In case the failure is a ReplyException, it's the failure code
+    - failure type: In case the failure is a ReplyException, it's the failure type
+    - failure message: In case the failure is a ReplyException, it's the failure message
+    - exception class: In case the failure is not a ReplyException, it's the exception class name
+    - exception message: In case the failure is not a ReplyException, it's the exception message
+    - duration: time since the message is sent until the response is received
 
 ## <a name="requirements"><a/> Requirements 
 
