@@ -434,7 +434,7 @@ with the Java system property **-Dpublish.events=false**. Thanks to λc, it's po
 different events that belongs to the same transaction.
 Go to the [vertx-effect doc](https://vertx.effect.imrafaelmerino.dev/#events) for further details.
 
-### <a name="jfr"><a/> JFR support
+## <a name="jfr"><a/> JFR support
 Since vertx-effect supports JFR, all the verticle messages have an associated event and can be visualized using
 Java Mission Control. 
 
