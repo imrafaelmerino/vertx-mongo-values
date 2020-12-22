@@ -16,7 +16,7 @@
 - [Defining modules](#defmodules)
 - [Deploying modules](#depmodules)
 - [Publishing events](#events)
-- [Java Flight Record support](#jfr)
+- [Java Flight Recorder support](#jfr)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Release process](#release)
