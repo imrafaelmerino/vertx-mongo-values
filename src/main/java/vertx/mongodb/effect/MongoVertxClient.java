@@ -1,5 +1,6 @@
 package vertx.mongodb.effect;
 
+import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -8,6 +9,7 @@ import com.mongodb.client.MongoDatabase;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import jsonvalues.JsObj;
+import mongovalues.JsValuesRegistry;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -40,6 +42,16 @@ public class MongoVertxClient extends AbstractVerticle {
         this.settings = requireNonNull(settings);
     }
 
+    public MongoVertxClient(final String connection) {
+
+        ConnectionString connString = new ConnectionString(requireNonNull(connection));
+
+        this.settings = MongoClientSettings.builder()
+                                           .applyConnectionString(connString)
+                                           .codecRegistry(JsValuesRegistry.INSTANCE)
+                                           .build();
+    }
+
     @Override
     public void start(final Promise<Void> startPromise) {
         MongoClient result = mongoClient;
@@ -52,7 +64,7 @@ public class MongoVertxClient extends AbstractVerticle {
                         getCollectionFromMongoDB =
                                 db -> name -> requireNonNull(db).getCollection(requireNonNull(name),
                                                                                JsObj.class
-                                                                              );
+                                );
                         startPromise.complete();
                     } catch (Exception error) {
                         startPromise.fail(error);
