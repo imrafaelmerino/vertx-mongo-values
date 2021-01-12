@@ -3,6 +3,7 @@ package vertx.mongodb.effect.functions;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
+import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
@@ -23,8 +24,7 @@ public class Aggregate<O> implements λc<JsArray, O> {
     public final Supplier<MongoCollection<JsObj>> collectionSupplier;
 
     public Aggregate(final Supplier<MongoCollection<JsObj>> collectionSupplier,
-                     final Function<AggregateIterable<JsObj>, O> resultConverter
-                    ) {
+                     final Function<AggregateIterable<JsObj>, O> resultConverter) {
         this.resultConverter = resultConverter;
         this.collectionSupplier = collectionSupplier;
     }
@@ -32,12 +32,15 @@ public class Aggregate<O> implements λc<JsArray, O> {
     @Override
     public Val<O> apply(final MultiMap context,
                         final JsArray m) {
-        try {
-            var pipeline   = Converters.jsArray2ListOfBson.apply(m);
-            var collection = requireNonNull(this.collectionSupplier.get());
-            return Cons.success(resultConverter.apply(collection.aggregate(pipeline)));
-        } catch (Throwable exc) {
-            return Cons.failure(Functions.toMongoValExc.apply(exc));
-        }
+        return Cons.of(() -> {
+            try {
+                var pipeline = Converters.jsArray2ListOfBson.apply(m);
+                var collection = requireNonNull(this.collectionSupplier.get());
+                return Future.succeededFuture(resultConverter.apply(collection.aggregate(pipeline)));
+            } catch (Exception exc) {
+                return Future.failedFuture(Functions.toMongoValExc.apply(exc));
+            }
+        });
+
     }
 }

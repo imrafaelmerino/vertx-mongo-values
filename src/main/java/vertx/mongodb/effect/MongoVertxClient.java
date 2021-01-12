@@ -24,6 +24,8 @@ public class MongoVertxClient extends AbstractVerticle {
     public final Supplier<MongoCollection<JsObj>> getCollection(String db,
                                                                 String collectionName) {
         return () -> {
+            if(getDatabase==null)
+                throw new NullPointerException("getDatabase function is null. Did you deploy the MongoVertxClient verticle?!");
             MongoDatabase database = getDatabase.apply(requireNonNull(db));
             return requireNonNull(this.getCollectionFromMongoDB)
                     .apply(database)

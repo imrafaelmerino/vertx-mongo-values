@@ -3,6 +3,7 @@ package vertx.mongodb.effect.functions;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.result.UpdateResult;
+import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
 import jsonvalues.JsObj;
 import vertx.effect.Val;
@@ -35,11 +36,11 @@ public class ReplaceOne<O> implements λc<UpdateMessage, O> {
 
     public ReplaceOne(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                       final Function<UpdateResult, O> resultConverter
-                     ) {
+    ) {
         this(collectionSupplier,
              resultConverter,
              DEFAULT_OPTIONS
-            );
+        );
     }
 
 
@@ -48,17 +49,20 @@ public class ReplaceOne<O> implements λc<UpdateMessage, O> {
                         final UpdateMessage message) {
         if (message == null) return Cons.failure(new IllegalArgumentException("message is null"));
 
-        try {
-            var collection = requireNonNull(this.collectionSupplier.get());
-            return Cons.success(resultConverter.apply(
-                    collection.replaceOne(Converters.jsObj2Bson.apply(message.filter),
-                                          message.update,
-                                          options
-                                         )
-                                                     ));
-        } catch (Exception exc) {
-            return Cons.failure(Functions.toMongoValExc.apply(exc));
 
-        }
+        return Cons.of(() -> {
+            try {
+                var collection = requireNonNull(this.collectionSupplier.get());
+                return Future.succeededFuture(resultConverter.apply(
+                        collection.replaceOne(Converters.jsObj2Bson.apply(message.filter),
+                                              message.update,
+                                              options
+                        )));
+
+            } catch (Exception exc) {
+                return Future.failedFuture(Functions.toMongoValExc.apply(exc));
+
+            }
+        });
     }
 }
