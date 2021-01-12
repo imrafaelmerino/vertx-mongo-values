@@ -4,13 +4,14 @@ package vertx.mongodb.effect.functions;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.InsertManyOptions;
 import com.mongodb.client.result.InsertManyResult;
+import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
-import vertx.effect.λc;
-import vertx.mongodb.effect.Converters;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
-import vertx.effect.exp.Cons;
 import vertx.effect.Val;
+import vertx.effect.exp.Cons;
+import vertx.effect.λc;
+import vertx.mongodb.effect.Converters;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -25,7 +26,6 @@ public class InsertMany<R> implements λc<JsArray, R> {
     private final Function<InsertManyResult, R> resultConverter;
 
 
-
     public InsertMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                       final Function<InsertManyResult, R> resultConverter) {
         this.collectionSupplier = requireNonNull(collectionSupplier);
@@ -36,7 +36,7 @@ public class InsertMany<R> implements λc<JsArray, R> {
     public InsertMany(final Supplier<MongoCollection<JsObj>> collectionSupplier,
                       final Function<InsertManyResult, R> resultConverter,
                       final InsertManyOptions options
-                     ) {
+    ) {
         this.collectionSupplier = requireNonNull(collectionSupplier);
         this.options = requireNonNull(options);
         this.resultConverter = requireNonNull(resultConverter);
@@ -44,21 +44,25 @@ public class InsertMany<R> implements λc<JsArray, R> {
 
 
     @Override
-    public Val<R> apply(final MultiMap context,final JsArray message) {
+    public Val<R> apply(final MultiMap context,
+                        final JsArray message) {
         if (message == null) return Cons.failure(new IllegalArgumentException("message is null"));
 
-        try {
-            var docs       = Converters.jsArray2ListOfJsObj.apply(message);
-            var collection = requireNonNull(collectionSupplier.get());
+        return Cons.of(() -> {
+            try {
+                var docs = Converters.jsArray2ListOfJsObj.apply(message);
+                var collection = requireNonNull(collectionSupplier.get());
 
-            return Cons.success(resultConverter.apply(collection
-                                                              .insertMany(docs,
-                                                                          options
-                                                                         )
-                                                     ));
-        } catch (Throwable exc) {
-            return Cons.failure(Functions.toMongoValExc.apply(exc));
+                return Future.succeededFuture(resultConverter.apply(collection
+                                                                            .insertMany(docs,
+                                                                                        options
+                                                                            ))
+                );
+            } catch (Exception exc) {
+                return Future.failedFuture(Functions.toMongoValExc.apply(exc));
 
-        }
+            }
+
+        });
     }
 }
