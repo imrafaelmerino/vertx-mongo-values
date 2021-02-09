@@ -14,7 +14,8 @@ import mongovalues.JsValuesRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import vertx.effect.Failures;
-import vertx.effect.exp.Cons;
+
+import vertx.effect.Val;
 import vertx.mongodb.effect.functions.FindOne;
 
 import java.util.function.Supplier;
@@ -60,9 +61,9 @@ public class TestErrors {
                             );
         //"java.util.concurrent.CompletionException: jio.JioFailure: Timeout while receiving message"
         findOne.apply(FindMessage.ofFilter(obj))
-               .flatMap(o -> Cons.FALSE,
-                        e -> Cons.success(Failures.anyOf(MONGO_READ_TIMEOUT_CODE)
-                                                  .test(e)
+               .flatMap(o -> Val.FALSE,
+                        e -> Val.succeed(Failures.anyOf(MONGO_READ_TIMEOUT_CODE)
+                                                 .test(e)
                                          )
                        ).get()
                .onComplete(Verifiers.pipeTo(context));
@@ -89,8 +90,8 @@ public class TestErrors {
 //                "state=CONNECTING, exception={com.mongodb.MongoSocketReadTimeoutException: " +
 //                "Timeout while receiving message}, caused by {java.net.SocketTimeoutException: Read timed out}}]
         findOne.apply(FindMessage.ofFilter(obj))
-               .flatMap(o -> Cons.TRUE,
-                        e -> Cons.success(Failures.anyOf(MONGO_CONNECT_TIMEOUT_CODE)
+               .flatMap(o -> Val.TRUE,
+                        e -> Val.succeed(Failures.anyOf(MONGO_CONNECT_TIMEOUT_CODE)
                                                   .test(e))
                        ).get().onComplete(Verifiers.pipeTo(context));
 

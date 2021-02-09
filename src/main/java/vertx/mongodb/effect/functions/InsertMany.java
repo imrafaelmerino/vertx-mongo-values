@@ -9,7 +9,6 @@ import io.vertx.core.MultiMap;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
 import vertx.effect.Val;
-import vertx.effect.exp.Cons;
 import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 
@@ -46,9 +45,9 @@ public class InsertMany<R> implements λc<JsArray, R> {
     @Override
     public Val<R> apply(final MultiMap context,
                         final JsArray message) {
-        if (message == null) return Cons.failure(new IllegalArgumentException("message is null"));
+        if (message == null) return Val.fail(new IllegalArgumentException("message is null"));
 
-        return Cons.of(() -> {
+        return Val.effect(() -> {
             try {
                 var docs = Converters.jsArray2ListOfJsObj.apply(message);
                 var collection = requireNonNull(collectionSupplier.get());

@@ -1,5 +1,5 @@
 # vertx-mongodb-effect
-## v1.0.0  ( Tue Jan 12 2021 19:22:57 GMT+0100 (Central European Standard Time) )
+## v1.1.0  ( Tue Jan 12 2021 19:22:57 GMT+0100 (Central European Standard Time) )
 
 
 ## Bug Fixes

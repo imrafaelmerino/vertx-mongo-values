@@ -6,7 +6,7 @@ import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
 import jsonvalues.JsObj;
 import vertx.effect.Val;
-import vertx.effect.exp.Cons;
+
 import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 import vertx.mongodb.effect.FindMessage;
@@ -33,9 +33,9 @@ class Find<O> implements λc<FindMessage, O> {
     public Val<O> apply(final MultiMap context,
                         final FindMessage message) {
         if (message == null)
-            return Cons.failure(new IllegalArgumentException("message is null"));
+            return Val.fail(new IllegalArgumentException("message is null"));
 
-        return Cons.of(() -> {
+        return Val.effect(() -> {
             try {
                 var hint = message.hint != null ? Converters.jsObj2Bson.apply(message.hint) : null;
                 var max = message.max != null ? Converters.jsObj2Bson.apply(message.max) : null;

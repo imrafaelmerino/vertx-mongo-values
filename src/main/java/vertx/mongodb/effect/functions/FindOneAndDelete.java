@@ -6,7 +6,7 @@ import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
 import jsonvalues.JsObj;
 import vertx.effect.Val;
-import vertx.effect.exp.Cons;
+
 import vertx.effect.λc;
 
 import java.util.function.Supplier;
@@ -37,8 +37,8 @@ public class FindOneAndDelete implements λc<JsObj, JsObj> {
     @Override
     public Val<JsObj> apply(final MultiMap context,
                             final JsObj query) {
-        if (query == null) return Cons.failure(new IllegalArgumentException("query is null"));
-        return Cons.of(() -> {
+        if (query == null) return Val.fail(new IllegalArgumentException("query is null"));
+        return Val.effect(() -> {
             try {
                 var collection = this.collectionSupplier.get();
                 return Future.succeededFuture(collection.findOneAndDelete(jsObj2Bson.apply(query),

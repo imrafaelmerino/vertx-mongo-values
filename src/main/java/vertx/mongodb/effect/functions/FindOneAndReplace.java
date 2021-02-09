@@ -6,7 +6,7 @@ import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
 import jsonvalues.JsObj;
 import vertx.effect.Val;
-import vertx.effect.exp.Cons;
+
 import vertx.effect.λc;
 import vertx.mongodb.effect.UpdateMessage;
 
@@ -39,10 +39,10 @@ public class FindOneAndReplace implements λc<UpdateMessage, JsObj> {
     @Override
     public Val<JsObj> apply(final MultiMap context,
                             final UpdateMessage message) {
-        if (message == null) return Cons.failure(new IllegalArgumentException("message is null"));
+        if (message == null) return Val.fail(new IllegalArgumentException("message is null"));
 
 
-        return Cons.of(() -> {
+        return Val.effect(() -> {
             try {
                 var collection = requireNonNull(this.collectionSupplier.get());
                 return Future.succeededFuture(collection
