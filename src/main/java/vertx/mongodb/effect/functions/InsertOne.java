@@ -8,7 +8,7 @@ import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
 import jsonvalues.JsObj;
 import vertx.effect.Val;
-import vertx.effect.exp.Cons;
+
 import vertx.effect.λc;
 
 import java.util.function.Function;
@@ -45,9 +45,9 @@ public class InsertOne<R> implements λc<JsObj, R> {
     @Override
     public Val<R> apply(final MultiMap context,
                         final JsObj message) {
-        if (message == null) return Cons.failure(new IllegalArgumentException("message is null"));
+        if (message == null) return Val.fail(new IllegalArgumentException("message is null"));
 
-        return Cons.of(() -> {
+        return Val.effect(() -> {
             try {
                 var collection = requireNonNull(this.collectionSupplier.get());
                 return Future.succeededFuture(resultConverter.apply(collection

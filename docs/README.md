@@ -5,7 +5,7 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=imrafaelmerino_vertx-mongodb-effect&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=imrafaelmerino_vertx-mongodb-effect)
 
 [![Javadocs](https://www.javadoc.io/badge/com.github.imrafaelmerino/vertx-mongodb-effect.svg)](https://www.javadoc.io/doc/com.github.imrafaelmerino/vertx-mongodb-effect)
-[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/1.0.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/1.0.0/jar)
+[![Maven](https://img.shields.io/maven-central/v/com.github.imrafaelmerino/vertx-mongodb-effect/1.1.0)](https://search.maven.org/artifact/com.github.imrafaelmerino/vertx-mongodb-effect/1.1.0/jar)
 [![](https://jitpack.io/v/imrafaelmerino/vertx-mongodb-effect.svg)](https://jitpack.io/#imrafaelmerino/vertx-mongodb-effect)
 
 - [Introduction](#introduction)
@@ -424,7 +424,7 @@ BiFunction<Integer,String,Val<Optional<JsObj>>> findByCode = (attempts,code) ->
                                                       ),
                                    attempts
                                   )
-                            .recoverWith(e -> Cons.success(Optional.empty()));
+                            .recoverWith(e -> Val.succeed(Optional.empty()));
 ```
 ## <a name="events"><a/> Publishing events
 
@@ -461,7 +461,7 @@ Fields of a verticle message event:
 <dependency>
    <groupId>com.github.imrafaelmerino</groupId>
    <artifactId>vertx-mongodb-effect</artifactId>
-   <version>1.0.0</version>
+   <version>1.1.0</version>
 </dependency>
 ```
 

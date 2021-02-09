@@ -5,7 +5,7 @@ import com.mongodb.client.model.CountOptions;
 import io.vertx.core.MultiMap;
 import jsonvalues.JsObj;
 import vertx.effect.Val;
-import vertx.effect.exp.Cons;
+
 import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 
@@ -37,10 +37,10 @@ public class Count implements λc<JsObj, Long> {
     @Override
     public Val<Long> apply(final MultiMap context,
                            final JsObj query) {
-        if (query == null) return Cons.failure(new IllegalArgumentException("query is null"));
+        if (query == null) return Val.fail(new IllegalArgumentException("query is null"));
 
 
-        return Cons.of(() -> {
+        return Val.effect(() -> {
             try {
                 var queryBson = Converters.jsObj2Bson.apply(requireNonNull(query));
                 var collection = requireNonNull(this.collectionSupplier.get());

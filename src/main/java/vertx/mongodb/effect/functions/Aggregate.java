@@ -8,7 +8,7 @@ import io.vertx.core.MultiMap;
 import jsonvalues.JsArray;
 import jsonvalues.JsObj;
 import vertx.effect.Val;
-import vertx.effect.exp.Cons;
+
 import vertx.effect.λc;
 import vertx.mongodb.effect.Converters;
 
@@ -32,7 +32,7 @@ public class Aggregate<O> implements λc<JsArray, O> {
     @Override
     public Val<O> apply(final MultiMap context,
                         final JsArray m) {
-        return Cons.of(() -> {
+        return Val.effect(() -> {
             try {
                 var pipeline = Converters.jsArray2ListOfBson.apply(m);
                 var collection = requireNonNull(this.collectionSupplier.get());

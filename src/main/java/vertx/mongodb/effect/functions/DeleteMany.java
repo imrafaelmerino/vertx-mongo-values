@@ -7,7 +7,7 @@ import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
 import jsonvalues.JsObj;
 import vertx.effect.Val;
-import vertx.effect.exp.Cons;
+
 import vertx.effect.λc;
 
 import java.util.function.Function;
@@ -44,9 +44,9 @@ public class DeleteMany<O> implements λc<JsObj, O> {
     @Override
     public Val<O> apply(final MultiMap context,
                         final JsObj query) {
-        if (query == null) return Cons.failure(new IllegalArgumentException("query is null"));
+        if (query == null) return Val.fail(new IllegalArgumentException("query is null"));
 
-        return Cons.of(() -> {
+        return Val.effect(() -> {
                            try {
                                var collection = requireNonNull(this.collectionSupplier.get());
                                return Future.succeededFuture(resultConverter.apply(collection.deleteMany(jsObj2Bson.apply(query),
